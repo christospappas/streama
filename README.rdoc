@@ -1,19 +1,95 @@
-= streama
+= Streama
 
-Description goes here.
+Streama is a simple ruby Activity Stream plugin for use with the Mongoid ODM framework.
 
-== Contributing to streama
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
-* Fork the project
-* Start a feature/bugfix branch
-* Commit and push until you are happy with your contribution
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+== Install
 
-== Copyright
+  $ gem install streama
+  
+== Usage
 
-Copyright (c) 2011 Christos Pappas. See LICENSE.txt for
-further details.
+=== Define Activity
 
+Define the activities and the fields you would like to store within the activity
+
+  Activity.define(:enquiry) do
+    actor :user, :store => [:full_name]
+    target :enquiry, :store => [:subject]
+    referrer :listing, :store => [:title]
+  end
+
+=== Setup Actors
+
+Include the Actor module and override the default followers method.
+
+  class User
+    include Mongoid::Document
+    include Streama::Actor
+
+    def followers
+      ...
+    end
+  end
+
+You can define multiple activity streams to send to in your actor. 
+The :followers parameter defines the method which returns recipients of the activity.
+
+  class User
+    include Mongoid::Document
+    include Streama::Actor
+  
+    activity_stream(:friends, :followers => :friends)
+    activity_stream(:family, :followers => :family)
+  
+    def friends
+      ...
+    end
+    
+    def family
+      ...
+    end
+  
+  end
+
+=== Publishing Activity
+
+In your controller or background worker:
+
+  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing)
+  
+This will send to to the :default stream. 
+
+To send an activity to a particular stream you defined in your actor, pass in an additional :stream parameter.
+
+  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :stream => :friends)
+
+== Compatibility
+
+Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
+
+== TODO
+
+* Load an actor, target, referrer instance from an activity
+* Change data caching to process on before_save rather than on assignment
+* Update stored data if an object is updated. (Not sure on the best way to do this yet)
+* Write more documentation, YARD
+* Write more tests
+* Benchmarks
+
+== Notes
+
+* Streama inserts a record for every recipient of an activity. MongoDB handles thousands of inserts within milliseconds, so it should be able to handle most cases. If storage size is a problem consider using capped collections (Need to test this with mongoid).
+
+= License
+
+Copyright © 2009 Christos Pappas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+= Credits
+
+Christos Pappas: christos at gmail dot com
