@@ -21,7 +21,7 @@ RSpec.configure do |config|
   config.include RSpec::Matchers
   config.include Mongoid::Matchers
   config.mock_with :rspec
-  config.after :all do
-    Mongoid.master.collections.each(&:drop)
+  config.after :each do
+    Mongoid.master.collections.select { |c| c.name != 'system.indexes' }.each(&:drop)
   end
 end

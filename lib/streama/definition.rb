@@ -21,7 +21,7 @@ module Streama
       return false unless definition.is_a? DefinitionDSL
       definition = new(definition)
       self.registered << definition
-      definition
+      return definition || false
     end
     
     # List of registered definitions

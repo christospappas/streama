@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe "Activity" do
 
-  let(:enquiry) { Enquiry.new(:comment => "I'm interested") }
-  let(:listing) { Listing.new(:title => "A test listing") }
-  let(:user) { User.new(:full_name => "Christos") }
+  let(:enquiry) { Enquiry.create(:comment => "I'm interested") }
+  let(:listing) { Listing.create(:title => "A test listing") }
+  let(:user) { User.create(:full_name => "Christos") }
   
   before(:all) do
     @definition = Streama::Activity.define(:new_enquiry) do
@@ -16,25 +16,35 @@ describe "Activity" do
   end  
 
   describe '.define' do
-    
     it "should register and return a valid definition" do
       @definition.is_a?(Streama::Definition).should be true
     end
+  end
+  
+  describe '#publish' do
+
+    before :each do
+      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+    end
     
+    it "should return a list of stream entries" do
+      @activity.save
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+      @activity.publish.size.should eq 6
+    end
   end
   
   describe '.new' do
-    
     it "should create a new activity" do
       activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      activity.should be_an_instance_of Streama::Activity
     end
-    
   end
   
-  describe '#target' do
-    
+  # do this for actor and referrer as well
+  describe '#target' do   
     before(:each) do
-      @activity = Streama::Activity.new(:verb => 'new_enquiry')
+      @activity = Streama::Activity.new(:name => 'new_enquiry')
     end
     
     it "should write target metadata" do
@@ -59,7 +69,6 @@ describe "Activity" do
     it "should raise an exception if stored field definition is invalid" do
       lambda { @activity.target = listing }.should raise_error Streama::UndefinedField
     end
-    
   end
   
 end

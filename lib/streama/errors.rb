@@ -12,4 +12,10 @@ module Streama
   class UndefinedField < StreamaError
   end
   
+  class ActivityNotSaved < StreamaError
+  end
+  
+  class UnknownStreamDefinition < StreamaError
+  end
+  
 end
