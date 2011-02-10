@@ -15,8 +15,6 @@ Mongoid.configure do |config|
   config.master = Mongo::Connection.new.db(name)
 end
 
-require 'mongoid-rspec'
-
 RSpec.configure do |config|
   config.include RSpec::Matchers
   config.include Mongoid::Matchers

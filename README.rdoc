@@ -70,12 +70,15 @@ Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 
 == TODO
 
-* Load an actor, target, referrer instance from an activity
-* Change data caching to process on before_save rather than on assignment
+* Return activity objects instead of stream objects when reading an activity stream.
+* Load an actor, target, referrer instance from an activity once retrieved.
+* Change data caching to process on before_save rather than on assignment.
 * Update stored data if an object is updated. (Not sure on the best way to do this yet)
 * Write more documentation, YARD
 * Write more tests
 * Benchmarks
+
+If you are looking for something that works with ActiveRecord take a look at fullsailors' {activity_stream}[https://github.com/fullsailor/activity_stream] which inspired this gem.
 
 == Notes
 
