@@ -20,7 +20,7 @@ Define the activities and the fields you would like to store within the activity
 
 === Setup Actors
 
-Include the Actor module and override the default followers method.
+Include the Actor module in a class and override the default followers method.
 
   class User
     include Mongoid::Document
@@ -93,4 +93,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 = Credits
 
-Christos Pappas: christos at gmail dot com
+Christos Pappas: christos dot pappas at gmail dot com
