@@ -15,8 +15,16 @@ module Streama
       activity.publish(stream, self.class.streams[stream])
     end
     
-    def activity_stream(stream = :default)
-      Streama::Stream.activities(self)
+    def activity_stream(options = {})
+      options = {:page => 1, :per_page => 20}.merge(options)
+      
+      stream = Streama::Stream.activities(self, options[:type])
+                    .paginate(:page => options[:page], :per_page => options[:per_page])
+      activities = Activity.where(:_id.in => stream.map(&:activity_id))
+      
+      results = WillPaginate::Collection.create(options[:page], options[:per_page], stream.total_entries) do |pager|
+        pager.replace(activities)
+      end
     end
     
     def followers

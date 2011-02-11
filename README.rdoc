@@ -8,15 +8,17 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
   
 == Usage
 
-=== Define Activity
+=== Define Activities
 
-Define the activities and the fields you would like to store within the activity
+In an initializer define the activities and the fields you would like to store within the activity.
 
-  Activity.define(:enquiry) do
+  Streama::Activity.define(:enquiry) do
     actor :user, :store => [:full_name]
     target :enquiry, :store => [:subject]
     referrer :listing, :store => [:title]
   end
+  
+You do not need to define :_id in the store options as it gets saved automatically.
 
 === Setup Actors
 
@@ -52,6 +54,10 @@ The :followers parameter defines the method which returns recipients of the acti
   
   end
 
+If you like you can also override the default activity stream follower method
+
+  activity_stream(:default, :followers => :your_method)
+
 === Publishing Activity
 
 In your controller or background worker:
@@ -64,13 +70,26 @@ To send an activity to a stream defined in your actor, pass in an additional :st
 
   current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :stream => :friends)
 
+== Retrieving Activity
+
+To retrieve all activity for an actor
+  
+  current_user.activity_stream
+  
+To retrieve and filter to a particular activity type
+
+  current_user.activity_stream(:type => :activity_type)
+  
+You can paginate your results as well
+  
+  current_user.activity_stream(:page => 1, :per_page => 10)
+
 == Compatibility
 
 Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 
 == TODO
 
-* Return activity objects instead of stream objects when reading an activity stream.
 * Load an actor, target, referrer instance from an activity once retrieved.
 * Change data caching to process on before_save rather than on assignment.
 * Update stored data if an object is updated. (Not sure on the best way to do this yet)
@@ -82,7 +101,8 @@ If you are looking for something that works with ActiveRecord take a look at ful
 
 == Notes
 
-* Streama inserts a record for every recipient of an activity. MongoDB handles thousands of inserts within milliseconds, so it should be able to handle most cases. If storage size is a problem consider using capped collections (Need to test this with mongoid).
+* I haven't tested this in production yet. I still need to validate whether the way this gem works is ok.
+* Streama inserts an association record for every recipient of an activity. MongoDB handles thousands of inserts within milliseconds, so it should be able to handle most cases. If storage size is a problem consider using capped collections (Need to test this with mongoid). I'm looking into whether embedding the relation within the actor object is better.
 
 = License
 
