@@ -32,6 +32,14 @@ describe "Activity" do
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
       @activity.publish.size.should eq 6
     end
+    
+    it "should override the streams recievers if option passed" do
+      @activity.save
+      send_to = []
+      2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+      @activity.publish(:receivers => send_to).size.should eq 2
+    end
   end
   
   describe '.new' do

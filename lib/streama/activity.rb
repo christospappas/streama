@@ -43,16 +43,19 @@ module Streama
     end
     data_methods :target, :referrer
 
-    def publish(name = :default, options = {})
-      raise Streama::UnknownStreamDefinition unless actor_instance.class.streams.has_key?(name)
+    def publish(options = {})
+      receivers = options.delete(:receivers) || :default
+      raise Streama::UnknownStreamDefinition if receivers.is_a?(Symbol) && !actor_instance.class.streams.has_key?(receivers)      
+      
       save if new_record?
-      receivers = actor_instance.send(actor_instance.class.streams[name][:followers])
+      
+      receivers = actor_instance.send(actor_instance.class.streams[receivers][:followers]) if receivers.is_a?(Symbol)
+      
       Streama::Stream.deliver(self, receivers)
     end
    
    
     protected
-   ## CHANGE THIS TO BEFORE_SAVE
     def assign_data(type, object)
       class_sym = object.class.name.downcase.to_sym
       type = type.to_sym

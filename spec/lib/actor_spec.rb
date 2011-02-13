@@ -32,7 +32,7 @@ describe "Actor" do
     end
     
     it "should push to a defined stream" do
-      response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :stream => :friends)
+      response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :receivers => :friends)
       response.size.should eq 6
     end
     

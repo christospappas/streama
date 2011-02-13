@@ -66,9 +66,10 @@ In your controller or background worker:
   
 This will send to to the :default stream. 
 
-To send an activity to a stream defined in your actor, pass in an additional :stream parameter.
+To send your activity to a different stream defined in your actor or a collection of receivers, pass in an additional :receivers parameter.
 
-  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :stream => :friends)
+  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => :friends)
+  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 
 == Retrieving Activity
 
@@ -91,18 +92,15 @@ Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 == TODO
 
 * Load an actor, target, referrer instance from an activity once retrieved.
-* Change data caching to process on before_save rather than on assignment.
-* Update stored data if an object is updated. (Not sure on the best way to do this yet)
 * Write more documentation, YARD
 * Write more tests
 * Benchmarks
-
-If you are looking for something that works with ActiveRecord take a look at fullsailors' {activity_stream}[https://github.com/fullsailor/activity_stream] which inspired this gem.
 
 == Notes
 
 * I haven't tested this in production yet. I still need to validate whether the way this gem works is ok.
 * Streama inserts an association record for every recipient of an activity. MongoDB handles thousands of inserts within milliseconds, so it should be able to handle most cases. If storage size is a problem consider using capped collections (Need to test this with mongoid). I'm looking into whether embedding the relation within the actor object is better.
+* If you are looking for something that works with ActiveRecord take a look at fullsailors' {activity_stream}[https://github.com/fullsailor/activity_stream] which inspired this gem.
 
 = License
 
