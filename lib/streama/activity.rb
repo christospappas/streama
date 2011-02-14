@@ -14,10 +14,11 @@ module Streama
     index [['actor._id', Mongo::ASCENDING], ['actor._type', Mongo::ASCENDING]]
     index [['target._id', Mongo::ASCENDING], ['target._type', Mongo::ASCENDING]]
     index [['referrer._id', Mongo::ASCENDING], ['referrer._type', Mongo::ASCENDING]]
-      
-    validates_presence_of :actor, :name, :target
     
     attr_accessor :actor_instance
+    
+    validates_presence_of :actor, :name, :target
+    before_save :assign_data
     
     #
     # Defines a new activity type
@@ -36,46 +37,44 @@ module Streama
       new({:name => name}.merge(data))
     end
 
-    def actor=(actor)
-      assign_data(:actor, actor)
-      self.actor_instance = actor
-    end
-
-    def self.data_methods(*args)
-      args.each do |method|
-        define_method("#{method}=") { |*args| assign_data(method, args[0]) }
-      end
-    end
-    data_methods :target, :referrer
-
     def publish(options = {})
       receivers = options.delete(:receivers) || :default
-      raise Streama::UnknownStreamDefinition if receivers.is_a?(Symbol) && !actor_instance.class.streams.has_key?(receivers)      
-      
-      save if new_record?
-      
-      receivers = actor_instance.send(actor_instance.class.streams[receivers][:followers]) if receivers.is_a?(Symbol)
-      
+      actor = instance(:actor)
+      streams = actor.class.streams
+
+      raise Streama::UnknownStreamDefinition if receivers.is_a?(Symbol) && !streams.has_key?(receivers)      
+      receivers = actor.send(streams[receivers][:followers]) if receivers.is_a?(Symbol)
+    
+      self.save
+                  
       Stream.deliver(self, receivers)
     end
-   
-   
-    protected
-    def assign_data(type, object)
-      class_sym = object.class.name.underscore.to_sym
-      type = type.to_sym
+    
+    def instance(type)
+      (data = self.send(type)).is_a?(Hash) ? data[:type].to_s.camelcase.constantize.find(data[:id]) : data
+    end
+    
+  protected
+  
+    def assign_data
       
-      raise Streama::UndefinedData unless definition.send(type).has_key?(class_sym)
+      [:actor, :target, :referrer].each do |type|
+        next unless object = instance(type)
+        
+        class_sym = object.class.name.underscore.to_sym
+
+        raise Streama::UndefinedData unless definition.send(type).has_key?(class_sym)
       
-      hash = {:id => object.id, :type => object.class.name}
+        hash = {:id => object.id, :type => object.class.name}
       
-      if fields = definition.send(type)[class_sym][:store]
-        fields.each do |field|
-          raise Streama::UndefinedField unless object.respond_to?(field)
-          hash[field] = object.send(field)
+        if fields = definition.send(type)[class_sym][:store]
+          fields.each do |field|
+            raise Streama::UndefinedField unless object.respond_to?(field)
+            hash[field] = object.send(field)
+          end
         end
+        write_attribute(type, hash)      
       end
-      write_attribute(type, hash)      
     end
     
     def definition

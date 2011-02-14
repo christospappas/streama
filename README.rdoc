@@ -107,6 +107,10 @@ You can paginate your results as well
   
   current_user.activity_stream(:page => 1, :per_page => 10)
 
+If you need to return the instance of an :actor, :target or :referrer from an activity call the "instance" method
+
+  activity.instance(:actor)
+  
 == Compatibility
 
 Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7

@@ -11,6 +11,7 @@ describe "Actor" do
     Streama::Activity.define :new_comment do
       actor :user, :store => [:full_name]
       target :listing, :store => [:title]
+      referrer :listing, :store => [:title]
     end
   end
   

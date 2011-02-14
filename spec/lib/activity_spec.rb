@@ -24,22 +24,34 @@ describe "Activity" do
   describe '#publish' do
 
     before :each do
-      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      @actor = user
+      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => @actor, :target => enquiry, :referrer => listing})
     end
     
     it "should return a list of stream entries" do
-      @activity.save
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
       @activity.publish.size.should eq 6
     end
     
     it "should override the streams recievers if option passed" do
-      @activity.save
       send_to = []
       2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
       @activity.publish(:receivers => send_to).size.should eq 2
     end
+    
+    context "when republishing"
+      before :each do
+        @activity.publish
+      end
+      
+      it "should update metadata" do
+        @actor.full_name = "testing"
+        @actor.save
+        @activity.publish
+        @activity.actor[:full_name].should eq "testing"
+
+      end
   end
   
   describe '.new' do
@@ -48,35 +60,25 @@ describe "Activity" do
       activity.should be_an_instance_of Streama::Activity
     end
   end
-  
-  # do this for actor and referrer as well
-  describe '#target' do   
-    before(:each) do
-      @activity = Streama::Activity.new(:name => 'new_enquiry')
+
+  describe '#instance' do
+    
+    before :each do
+      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
     end
     
-    it "should write target metadata" do
-      @activity.target = enquiry
-      @activity.target[:comment].should eq "I'm interested"
+    it "should load an actor instance" do
+      @activity.instance(:actor).should be_instance_of User
     end
     
-    it "should write target id" do
-      @activity.target = enquiry
-      @activity.target[:id].should_not be nil
+    it "should load a target instance" do
+      @activity.instance(:target).should be_instance_of Enquiry
     end
     
-    it "should write target type" do
-      @activity.target = enquiry
-      @activity.target[:type].should_not be nil
+    it "should load an referrer instance" do
+      @activity.instance(:referrer).should be_instance_of Listing
     end
     
-    it "should raise an exception if target object is not defined" do
-      lambda { @activity.target = user }.should raise_error Streama::UndefinedData
-    end
-    
-    it "should raise an exception if stored field definition is invalid" do
-      lambda { @activity.target = listing }.should raise_error Streama::UndefinedField
-    end
   end
   
 end
