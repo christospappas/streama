@@ -7,14 +7,8 @@ describe "Actor" do
   let(:listing) { Listing.create(:title => "A test listing") }
   let(:user) { User.create(:full_name => "Christos") }
   
-  before(:all) do
-    Streama::Activity.define(:new_enquiry) do
-      actor :user, :store => [:full_name]
-      target :enquiry, :store => [:comment]
-      referrer :listing, :store => [:title]
-    end
-    
-    Streama::Activity.define(:new_comment) do
+  before :all do
+    Streama::Activity.define :new_comment do
       actor :user, :store => [:full_name]
       target :listing, :store => [:title]
     end

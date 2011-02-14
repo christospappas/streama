@@ -17,8 +17,18 @@ In an initializer define the activities and the fields you would like to store w
     target :enquiry, :store => [:subject]
     referrer :listing, :store => [:title]
   end
-  
-You do not need to define :_id in the store options as it gets saved automatically.
+ 
+Alternatively, you can extend the Activity class in your application.
+
+  class Activity < Streama::Activity
+
+    define(:enquiry) do
+      actor :user, :store => [:full_name]
+      target :enquiry, :store => [:subject]
+      referrer :listing, :store => [:title]
+    end
+
+  end
 
 === Setup Actors
 
@@ -58,6 +68,14 @@ If you like you can also override the default activity stream follower method
 
   activity_stream(:default, :followers => :your_method)
 
+=== Setup Indexes
+
+You need to manually create the indexes for both the Activity and Stream collections. You can do so by calling the create_indexes method.
+
+  Streama::Activity.create_indexes
+  Streama::Stream.created_indexes
+
+
 === Publishing Activity
 
 In your controller or background worker:
@@ -92,6 +110,7 @@ Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 == TODO
 
 * Load an actor, target, referrer instance from an activity once retrieved.
+* Create a module that listens for changes to targets, referrer objects and updates activity metadata.
 * Write more documentation, YARD
 * Write more tests
 * Benchmarks

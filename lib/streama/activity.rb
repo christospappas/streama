@@ -2,14 +2,19 @@ module Streama
   class Activity
     include Mongoid::Document
     include Mongoid::Timestamps
-  
+    
+    store_in :activities
+    
     field :name,        :type => Symbol
     field :actor,       :type => Hash
     field :target,      :type => Hash
     field :referrer,    :type => Hash
-  
-    # references_many :streams
-  
+    
+    index :name
+    index [['actor._id', Mongo::ASCENDING], ['actor._type', Mongo::ASCENDING]]
+    index [['target._id', Mongo::ASCENDING], ['target._type', Mongo::ASCENDING]]
+    index [['referrer._id', Mongo::ASCENDING], ['referrer._type', Mongo::ASCENDING]]
+      
     validates_presence_of :actor, :name, :target
     
     attr_accessor :actor_instance
@@ -51,13 +56,13 @@ module Streama
       
       receivers = actor_instance.send(actor_instance.class.streams[receivers][:followers]) if receivers.is_a?(Symbol)
       
-      Streama::Stream.deliver(self, receivers)
+      Stream.deliver(self, receivers)
     end
    
    
     protected
     def assign_data(type, object)
-      class_sym = object.class.name.downcase.to_sym
+      class_sym = object.class.name.underscore.to_sym
       type = type.to_sym
       
       raise Streama::UndefinedData unless definition.send(type).has_key?(class_sym)

@@ -5,14 +5,13 @@ describe "Stream" do
   let(:enquiry) { Enquiry.create(:comment => "I'm interested") }
   let(:listing) { Listing.create(:title => "A test listing") }
   let(:user) { User.create(:full_name => "Christos") }
-
-  before(:all) do
-    @definition = Streama::Activity.define(:new_enquiry) do
+  
+  before :all do
+    Streama::Activity.define :new_enquiry do
       actor :user, :store => [:full_name]
       target :enquiry, :store => [:comment]
-      target :listing, :store => [:title, :full_address]
       referrer :listing, :store => [:title]
-    end    
+    end
   end
   
   describe ".deliver" do

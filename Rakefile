@@ -19,12 +19,6 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Streama is a simple activity stream gem for use with the Mongoid ODM framework.}
   gem.email = "christos.pappas@gmail.com"
   gem.authors = ["Christos Pappas"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  gem.add_runtime_dependency 'mongoid', '2.0.0.rc.7'
-  gem.add_runtime_dependency 'bson_ext', '~> 1.2'
-  gem.add_development_dependency 'rspec', '> 2.3.0'
-
 end
 Jeweler::RubygemsDotOrgTasks.new
 
