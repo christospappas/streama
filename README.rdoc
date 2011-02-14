@@ -117,7 +117,6 @@ Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 
 == TODO
 
-* Load an actor, target, referrer instance from an activity once retrieved.
 * Create a module that listens for changes to targets, referrer objects and updates activity metadata.
 * Write more documentation, YARD
 * Write more tests
