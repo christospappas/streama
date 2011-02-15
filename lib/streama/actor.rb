@@ -11,7 +11,7 @@ module Streama
     
     def publish_activity(name, options={})
       receivers = options.delete(:receivers) || :default
-      activity = Activity.new_with_data(name, {:actor => self}.merge(options))
+      activity = Streama::Activity.new_with_data(name, {:actor => self}.merge(options))
       activity.publish(:receivers => receivers)
     end
     
@@ -20,7 +20,7 @@ module Streama
       
       stream = Stream.activities(self, options[:type])
                     .paginate(:page => options[:page], :per_page => options[:per_page])
-      activities = Activity.where(:_id.in => stream.map(&:activity_id)).desc(:created_at)
+      activities = Streama::Activity.where(:_id.in => stream.map(&:activity_id)).desc(:created_at)
       
       WillPaginate::Collection.create(options[:page], options[:per_page], stream.total_entries) do |pager|
         pager.replace(activities)
