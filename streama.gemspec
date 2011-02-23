@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{streama}
-  s.version = "0.1.3"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Christos Pappas"]
-  s.date = %q{2011-02-14}
+  s.date = %q{2011-02-15}
   s.description = %q{Streama is a simple activity stream gem for use with the Mongoid ODM framework.}
   s.email = %q{christos.pappas@gmail.com}
   s.extra_rdoc_files = [

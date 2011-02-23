@@ -24,7 +24,6 @@ module Streama
     end
     data_methods :actor, :target, :referrer
 
-
   end
   
 end

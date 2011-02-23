@@ -16,14 +16,14 @@ describe "Definition" do
       @definition = Streama::Definition.new(@definition_dsl)
     end
     
-    it "should assign @actor" do
+    it "assigns @actor" do
       @definition.actor.has_key?(:user).should be true
     end
-    it "should assign @target" do
+    it "assigns @target" do
       @definition.target.has_key?(:enquiry).should be true
     end
     
-    it "should assign @referrer" do
+    it "assigns @referrer" do
       @definition.referrer.has_key?(:listing).should be true
     end
     
@@ -31,11 +31,11 @@ describe "Definition" do
   
   describe '.register' do
     
-    it "should register a definition and return new definition" do
+    it "registers a definition and return new definition" do
       Streama::Definition.register(definition_dsl).is_a?(Streama::Definition).should eq true
     end
     
-    it "should return false if invalid definition" do
+    it "returns false if invalid definition" do
       Streama::Definition.register(false).should be false
     end
     
@@ -43,7 +43,7 @@ describe "Definition" do
   
   describe '.registered' do
     
-    it "should return registered definitions" do
+    it "returns registered definitions" do
       Streama::Definition.register(definition_dsl)
       Streama::Definition.registered.size.should be > 0
     end
@@ -52,11 +52,11 @@ describe "Definition" do
   
   describe '.find' do
     
-    it "should return the definition by name" do
+    it "returns the definition by name" do
       Streama::Definition.find(:new_enquiry).name.should eq :new_enquiry
     end
     
-    it "should raise an exception if invalid activity" do
+    it "raises an exception if invalid activity" do
       lambda { Streama::Definition.find(:unknown_activity) }.should raise_error Streama::UndefinedActivity
     end
     

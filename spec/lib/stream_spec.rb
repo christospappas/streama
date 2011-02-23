@@ -21,17 +21,17 @@ describe "Stream" do
       @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
     end
     
-    it "should raise an exception if the activity hasn't been saved" do
+    it "raises an exception if the activity hasn't been saved" do
       lambda { Streama::Stream.deliver(@activity, User.all ) }.should raise_error Streama::ActivityNotSaved
     end
     
-    it "should insert activity into receivers stream" do
+    it "inserts activity into receivers stream" do
       @activity.save
       Streama::Stream.deliver(@activity, User.all )
       Streama::Stream.count.should eq 6
     end
     
-    it "should check if stream is valid before batch insert"
+    it "checks if stream is valid before batch insert"
     
   end
   

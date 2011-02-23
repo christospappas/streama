@@ -21,17 +21,17 @@ describe "Actor" do
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
     end
     
-    it "should push activity to receivers" do
+    it "pushes activity to receivers" do
       response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing)
       response.size.should eq 6
     end
     
-    it "should push to a defined stream" do
+    it "pushes to a defined stream" do
       response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :receivers => :friends)
       response.size.should eq 6
     end
     
-    it "should raise an error if no target defined" do
+    it "raises an error if no target defined" do
       lambda { user.publish_activity(:new_enquiry) }.should raise_error Streama::ActivityNotSaved
     end
     
@@ -45,15 +45,15 @@ describe "Actor" do
       user.publish_activity(:new_comment, :target => listing)
     end
     
-    it "should retrieve the stream for an actor" do
+    it "retrieves the stream for an actor" do
       user.activity_stream.size.should eq 2
     end
     
-    it "should retrieve the stream and filter to a particular activity type" do
+    it "retrieves the stream and filter to a particular activity type" do
       user.activity_stream(:type => :new_comment).size.should eq 1
     end
     
-    it "should paginate the stream" do
+    it "paginates the stream" do
       
       10.times { user.publish_activity(:new_comment, :target => listing) }
       

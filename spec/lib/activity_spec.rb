@@ -16,7 +16,7 @@ describe "Activity" do
   end  
 
   describe '.define' do
-    it "should register and return a valid definition" do
+    it "registers and return a valid definition" do
       @definition.is_a?(Streama::Definition).should be true
     end
   end
@@ -28,12 +28,12 @@ describe "Activity" do
       @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => @actor, :target => enquiry, :referrer => listing})
     end
     
-    it "should return a list of stream entries" do
+    it "returns a list of stream entries" do
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
       @activity.publish.size.should eq 6
     end
     
-    it "should override the streams recievers if option passed" do
+    it "overrides the streams recievers if option passed" do
       send_to = []
       2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
@@ -45,7 +45,7 @@ describe "Activity" do
         @activity.publish
       end
       
-      it "should update metadata" do
+      it "updates metadata" do
         @actor.full_name = "testing"
         @actor.save
         @activity.publish
@@ -55,7 +55,7 @@ describe "Activity" do
   end
   
   describe '.new' do
-    it "should create a new activity" do
+    it "creates a new activity" do
       activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
       activity.should be_an_instance_of Streama::Activity
     end
@@ -67,15 +67,15 @@ describe "Activity" do
       @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
     end
     
-    it "should load an actor instance" do
+    it "loads an actor instance" do
       @activity.instance(:actor).should be_instance_of User
     end
     
-    it "should load a target instance" do
+    it "loads a target instance" do
       @activity.instance(:target).should be_instance_of Enquiry
     end
     
-    it "should load an referrer instance" do
+    it "loads a referrer instance" do
       @activity.instance(:referrer).should be_instance_of Listing
     end
     
