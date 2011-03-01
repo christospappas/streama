@@ -77,8 +77,13 @@ module Streama
     # @param [ Symbol ] type The data type (actor, target, referrer) to return an instance for.
     #
     # @return [Object] object An object instance
-    def instance(type)
-      (data = self.send(type)).is_a?(Hash) ? data[:type].to_s.camelcase.constantize.find(data[:id]) : data
+    def load_instance(type)
+      (data = self.send(type)).is_a?(Hash) ? data['type'].to_s.camelcase.constantize.find(data['id']) : data
+    end
+    
+    def refresh_data
+      assign_data
+      save
     end
     
   protected
@@ -87,17 +92,17 @@ module Streama
       
       [:actor, :target, :referrer].each do |type|
         next unless object = instance(type)
-        
+
         class_sym = object.class.name.underscore.to_sym
 
         raise Streama::InvalidData.new(class_sym) unless definition.send(type).has_key?(class_sym)
       
-        hash = {:id => object.id, :type => object.class.name}
+        hash = {'id' => object.id, 'type' => object.class.name}
                 
         if fields = definition.send(type)[class_sym][:store]
           fields.each do |field|
             raise Streama::InvalidField.new(field) unless object.respond_to?(field)
-            hash[field] = object.send(field)
+            hash[field.to_s] = object.send(field)
           end
         end
         write_attribute(type, hash)      

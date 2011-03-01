@@ -94,7 +94,7 @@ You can paginate your results as well
 
 If you need to return the instance of an :actor, :target or :referrer from an activity call the "instance" method
 
-  activity.instance(:actor)
+  activity.load_instance(:actor)
   
 == Compatibility
 

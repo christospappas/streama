@@ -61,7 +61,7 @@ describe "Activity" do
         @actor.full_name = "testing"
         @actor.save
         @activity.publish
-        @activity.actor[:full_name].should eq "testing"
+        @activity.actor['full_name'].should eq "testing"
 
       end
   end
@@ -71,6 +71,25 @@ describe "Activity" do
       activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
       activity.should be_an_instance_of Streama::Activity
     end
+  end
+
+  describe '#refresh' do
+    
+    before :each do
+      @user = user
+      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => @user, :target => enquiry, :referrer => listing})
+    end
+    
+    it "reloads instances and updates activities stored data" do
+      @activity.save
+      @activity = Streama::Activity.last    
+      
+      expect do
+        @user.update_attribute(:full_name, "Test")
+        @activity.refresh_data
+      end.to change{ @activity.instance(:actor).full_name}.from("Christos").to("Test")
+    end
+    
   end
 
   describe '#instance' do
