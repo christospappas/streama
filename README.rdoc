@@ -92,9 +92,13 @@ You can paginate your results as well
   
   current_user.activity_stream(:page => 1, :per_page => 10)
 
-If you need to return the instance of an :actor, :target or :referrer from an activity call the "instance" method
+If you need to return the instance of an :actor, :target or :referrer from an activity call the Activity#load_instance method
 
   activity.load_instance(:actor)
+  
+You can also refresh the stored activity data by calling the Activity#refresh_data method
+  
+  activity.refresh_data
   
 == Compatibility
 
