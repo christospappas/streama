@@ -57,7 +57,7 @@ describe "Definition" do
     end
     
     it "raises an exception if invalid activity" do
-      lambda { Streama::Definition.find(:unknown_activity) }.should raise_error Streama::UndefinedActivity
+      lambda { Streama::Definition.find(:unknown_activity) }.should raise_error Streama::InvalidActivity
     end
     
   end

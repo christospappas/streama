@@ -3,19 +3,42 @@ module Streama
   class StreamaError < StandardError
   end
   
-  class UndefinedActivity < StreamaError
+  class InvalidActivity < StreamaError
   end
   
-  class UndefinedData < StreamaError
+  # This error is raised when an object isn't defined
+  # as an actor, target or referrer
+  #
+  # Example:
+  #
+  # <tt>InvalidField.new('field_name')</tt>
+  class InvalidData < StreamaError
+    attr_reader :message
+
+    def initialize message
+      @message = "Invalid Data: #{message}"
+    end
+
   end
   
-  class UndefinedField < StreamaError
+  # This error is raised when trying to store a field that doesn't exist
+  #
+  # Example:
+  #
+  # <tt>InvalidField.new('field_name')</tt>
+  class InvalidField < StreamaError
+    attr_reader :message
+
+    def initialize message
+      @message = "Invalid Field: #{message}"
+    end
+
   end
   
   class ActivityNotSaved < StreamaError
   end
   
-  class UnknownStreamDefinition < StreamaError
+  class InvalidStreamDefinition < StreamaError
   end
   
 end

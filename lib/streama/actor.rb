@@ -18,8 +18,12 @@ module Streama
     def activity_stream(options = {})
       options = {:page => 1, :per_page => 20}.merge(options)
       
-      stream = Stream.activities(self, options[:type])
-                    .paginate(:page => options[:page], :per_page => options[:per_page])
+      conditions = { :receiver_id => self.id, :receiver_type => self.class.name }
+      conditions.merge!({:activity_type => options[:type]}) if options[:type]
+
+      stream = Streama::Stream.where(conditions).desc(:created_at)
+                              .paginate(:page => options[:page], :per_page => options[:per_page])
+      
       activities = Streama::Activity.where(:_id.in => stream.map(&:activity_id)).desc(:created_at)
       
       WillPaginate::Collection.create(options[:page], options[:per_page], stream.total_entries) do |pager|

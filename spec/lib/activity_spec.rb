@@ -15,6 +15,18 @@ describe "Activity" do
     end    
   end  
 
+  describe "#destroy" do
+    
+    it "should remove associated streams" do
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      @activity.publish
+      @activity.reload.streams
+      expect { @activity.destroy }.to change{Streama::Stream.count}.from(6).to(0)
+    end
+    
+  end
+
   describe '.define' do
     it "registers and return a valid definition" do
       @definition.is_a?(Streama::Definition).should be true

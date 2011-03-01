@@ -32,7 +32,7 @@ module Streama
     
     def self.find(name)
       unless definition = registered.find{|definition| definition.name == name.to_sym}
-        raise Streama::UndefinedActivity, "Could not find a definition for `#{name}`"
+        raise Streama::InvalidActivity, "Could not find a definition for `#{name}`"
       else
         definition
       end

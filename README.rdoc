@@ -18,21 +18,6 @@ In an initializer define the activities and the fields you would like to store w
     referrer :listing, :store => [:title]
   end
  
-Alternatively, you can extend the Activity class in your application.
-
-  class Activity < Streama::Activity
-
-    define(:enquiry) do
-      actor :user, :store => [:full_name]
-      target :enquiry, :store => [:subject]
-      referrer :listing, :store => [:title]
-    end
-    
-    define(:comment) do
-      ...
-    end
-
-  end
 
 === Setup Actors
 
