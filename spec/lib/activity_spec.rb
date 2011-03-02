@@ -87,27 +87,27 @@ describe "Activity" do
       expect do
         @user.update_attribute(:full_name, "Test")
         @activity.refresh_data
-      end.to change{ @activity.instance(:actor).full_name}.from("Christos").to("Test")
+      end.to change{ @activity.load_instance(:actor).full_name}.from("Christos").to("Test")
     end
     
   end
 
-  describe '#instance' do
+  describe '#load_instance' do
     
     before :each do
       @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
     end
     
     it "loads an actor instance" do
-      @activity.instance(:actor).should be_instance_of User
+      @activity.load_instance(:actor).should be_instance_of User
     end
     
     it "loads a target instance" do
-      @activity.instance(:target).should be_instance_of Enquiry
+      @activity.load_instance(:target).should be_instance_of Enquiry
     end
     
     it "loads a referrer instance" do
-      @activity.instance(:referrer).should be_instance_of Listing
+      @activity.load_instance(:referrer).should be_instance_of Listing
     end
     
   end

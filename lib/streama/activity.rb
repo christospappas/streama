@@ -61,7 +61,7 @@ module Streama
     #
     def publish(options = {})
       receivers = options.delete(:receivers) || :default
-      actor = instance(:actor)
+      actor = load_instance(:actor)
       streams = actor.class.streams
 
       raise Streama::InvalidStreamDefinition if receivers.is_a?(Symbol) && !streams.has_key?(receivers)      
@@ -91,7 +91,7 @@ module Streama
     def assign_data
       
       [:actor, :target, :referrer].each do |type|
-        next unless object = instance(type)
+        next unless object = load_instance(type)
 
         class_sym = object.class.name.underscore.to_sym
 
