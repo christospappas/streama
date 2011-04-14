@@ -19,7 +19,7 @@ module Streama
     
     attr_accessor :actor_instance
     
-    validates_presence_of :actor, :name, :target
+    validates_presence_of :actor, :name
     before_save :assign_data
     
     # Defines a new activity type and registers a definition

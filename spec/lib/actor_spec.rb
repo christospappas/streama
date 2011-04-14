@@ -31,10 +31,6 @@ describe "Actor" do
       response.size.should eq 6
     end
     
-    it "raises an error if no target defined" do
-      lambda { user.publish_activity(:new_enquiry) }.should raise_error Streama::ActivityNotSaved
-    end
-    
   end
   
   describe "#activity_stream" do
