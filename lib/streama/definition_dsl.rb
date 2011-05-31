@@ -14,7 +14,7 @@ module Streama
     end
     
     delegate :[], :to => :@attributes
-    
+        
     def self.data_methods(*args)
       args.each do |method|
         define_method method do |*args|

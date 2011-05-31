@@ -5,30 +5,16 @@ describe "Activity" do
   let(:enquiry) { Enquiry.create(:comment => "I'm interested") }
   let(:listing) { Listing.create(:title => "A test listing") }
   let(:user) { User.create(:full_name => "Christos") }
-  
-  before(:all) do
-    @definition = Streama::Activity.define(:new_enquiry) do
-      actor :user, :store => [:full_name]
-      target :enquiry, :store => [:comment]
-      target :listing, :store => [:title, :full_address]
-      referrer :listing, :store => [:title]
-    end    
-  end  
 
-  describe "#destroy" do
-    
-    it "should remove associated streams" do
-      5.times { |n| User.create(:full_name => "Receiver #{n}") }
-      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
-      @activity.publish
-      @activity.reload.streams
-      expect { @activity.destroy }.to change{Streama::Stream.count}.from(6).to(0)
-    end
-    
-  end
-
-  describe '.define' do
+  describe '.activity' do
     it "registers and return a valid definition" do
+      @definition = Activity.activity(:new_enquiry) do
+        actor :user, :cache => [:full_name]
+        target :enquiry, :cache => [:comment]
+        target :listing, :cache => [:title, :full_address]
+        referrer :listing, :cache => [:title]
+      end
+      
       @definition.is_a?(Streama::Definition).should be true
     end
   end
@@ -37,19 +23,16 @@ describe "Activity" do
 
     before :each do
       @actor = user
-      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => @actor, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => @actor, :target => enquiry, :referrer => listing})
     end
     
-    it "returns a list of stream entries" do
-      5.times { |n| User.create(:full_name => "Receiver #{n}") }
-      @activity.publish.size.should eq 6
-    end
-    
-    it "overrides the streams recievers if option passed" do
+    it "overrides the recievers if option passed" do
       send_to = []
       2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
-      @activity.publish(:receivers => send_to).size.should eq 2
+
+      # @activity.receivers << send_to
+      # @activity.receivers.size.should == 2
     end
     
     context "when republishing"
@@ -66,10 +49,11 @@ describe "Activity" do
       end
   end
   
-  describe '.new' do
+  
+  describe '.publish' do
     it "creates a new activity" do
-      activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
-      activity.should be_an_instance_of Streama::Activity
+      activity = Activity.publish(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      activity.should be_an_instance_of Activity
     end
   end
 
@@ -77,12 +61,12 @@ describe "Activity" do
     
     before :each do
       @user = user
-      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => @user, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => @user, :target => enquiry, :referrer => listing})
     end
     
     it "reloads instances and updates activities stored data" do
       @activity.save
-      @activity = Streama::Activity.last    
+      @activity = Activity.last    
       
       expect do
         @user.update_attribute(:full_name, "Test")
@@ -95,7 +79,8 @@ describe "Activity" do
   describe '#load_instance' do
     
     before :each do
-      @activity = Streama::Activity.new_with_data(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      @activity = Activity.last
     end
     
     it "loads an actor instance" do

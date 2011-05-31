@@ -38,7 +38,4 @@ module Streama
   class ActivityNotSaved < StreamaError
   end
   
-  class InvalidStreamDefinition < StreamaError
-  end
-  
 end

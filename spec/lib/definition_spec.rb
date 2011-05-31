@@ -4,9 +4,9 @@ describe "Definition" do
   
   let(:definition_dsl) do
     dsl = Streama::DefinitionDSL.new(:new_enquiry)
-    dsl.actor(:user, :store => [:id, :full_name])
-    dsl.target(:enquiry, :store => [:id, :full_name])
-    dsl.referrer(:listing, :store => [:id, :name, :full_address])
+    dsl.actor(:user, :cache => [:id, :full_name])
+    dsl.target(:enquiry, :cache => [:id, :full_name])
+    dsl.referrer(:listing, :cache => [:id, :name, :full_address])
     dsl
   end
   

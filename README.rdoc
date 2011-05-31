@@ -10,14 +10,18 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
 
 === Define Activities
 
-In an initializer define the activities and the fields you would like to store within the activity.
+Create an Activity model and define the activities and the fields you would like to cache within the activity.
 
-  Streama::Activity.define(:enquiry) do
-    actor :user, :store => [:full_name]
-    target :enquiry, :store => [:subject]
-    referrer :listing, :store => [:title]
+class Activity
+  include Streama::Activity
+  
+  activity :enquiry do
+    actor :user, :cache => [:full_name]
+    target :enquiry, :cache => [:subject]
+    referrer :listing, :cache => [:title]
   end
- 
+  
+end
 
 === Setup Actors
 
@@ -32,38 +36,11 @@ Include the Actor module in a class and override the default followers method.
     end
   end
 
-You can define multiple activity streams to publish to in your Actor. 
-
-The :followers parameter defines the method which returns recipients of the activity.
-
-  class User
-    include Mongoid::Document
-    include Streama::Actor
-  
-    activity_stream(:friends, :followers => :friends)
-    activity_stream(:family, :followers => :family)
-  
-    def friends
-      ...
-    end
-    
-    def family
-      ...
-    end
-  
-  end
-
-If you like you can also override the default activity stream follower method
-
-  activity_stream(:default, :followers => :your_method)
-
 === Setup Indexes
 
-You need to manually create the indexes for both the Activity and Stream collections. You can do so by calling the create_indexes method.
+Create the indexes for the Activities collection. You can do so by calling the create_indexes method.
 
-  Streama::Activity.create_indexes
-  Streama::Stream.create_indexes
-
+  Activity.create_indexes
 
 === Publishing Activity
 
@@ -71,11 +48,11 @@ In your controller or background worker:
 
   current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing)
   
-This will send to to the :default stream. 
+This will publish the activity to the objects returned by the "followers" method in the Actor.
 
-To send your activity to a different stream defined in your actor or a collection of receivers, pass in an additional :receivers parameter.
+To send your activity to different receievers, pass in an additional :receivers parameter.
 
-  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => :friends)
+  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => :friends) # calls friends method
   current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 
 == Retrieving Activity
@@ -87,16 +64,12 @@ To retrieve all activity for an actor
 To retrieve and filter to a particular activity type
 
   current_user.activity_stream(:type => :activity_type)
-  
-You can paginate your results as well
-  
-  current_user.activity_stream(:page => 1, :per_page => 10)
 
 If you need to return the instance of an :actor, :target or :referrer from an activity call the Activity#load_instance method
 
   activity.load_instance(:actor)
   
-You can also refresh the stored activity data by calling the Activity#refresh_data method
+You can also refresh the cached activity data by calling the Activity#refresh_data method
   
   activity.refresh_data
   
@@ -106,16 +79,9 @@ Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
 
 == TODO
 
-* Create a module that listens for changes to targets, referrer objects and updates activity metadata.
 * Write more documentation, YARD
 * Write more tests
 * Benchmarks
-
-== Notes
-
-* I haven't tested this in production yet. I still need to validate whether the way this gem works is ok.
-* Streama inserts an association record for every recipient of an activity. MongoDB handles thousands of inserts within milliseconds, so it should be able to handle most cases. If storage size is a problem consider using capped collections (Need to test this with mongoid). I'm looking into whether embedding the relation within the actor object is better.
-* If you are looking for something that works with ActiveRecord take a look at fullsailors' {activity_stream}[https://github.com/fullsailor/activity_stream] which inspired this gem.
 
 = License
 

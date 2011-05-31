@@ -1,4 +1,3 @@
-require "benchmark"
 require 'spec_helper'
 
 describe "Actor" do
@@ -8,10 +7,10 @@ describe "Actor" do
   let(:user) { User.create(:full_name => "Christos") }
   
   before :all do
-    Streama::Activity.define :new_comment do
-      actor :user, :store => [:full_name]
-      target :listing, :store => [:title]
-      referrer :listing, :store => [:title]
+    Activity.activity :new_comment do
+      actor :user, :cache => [:full_name]
+      target :listing, :cache => [:title]
+      referrer :listing, :cache => [:title]
     end
   end
   
@@ -22,13 +21,13 @@ describe "Actor" do
     end
     
     it "pushes activity to receivers" do
-      response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing)
-      response.size.should eq 6
+      activity = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing)
+      activity.receivers.size == 6
     end
     
     it "pushes to a defined stream" do
-      response = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :receivers => :friends)
-      response.size.should eq 6
+      activity = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :receivers => :friends)
+      activity.receivers.size == 6
     end
     
   end
@@ -45,18 +44,10 @@ describe "Actor" do
       user.activity_stream.size.should eq 2
     end
     
-    it "retrieves the stream and filter to a particular activity type" do
+    it "retrieves the stream and filters to a particular activity type" do
       user.activity_stream(:type => :new_comment).size.should eq 1
     end
-    
-    it "paginates the stream" do
-      
-      10.times { user.publish_activity(:new_comment, :target => listing) }
-      
-      activity = user.activity_stream(:page => 1, :per_page => 5)
-      activity.size.should eq 5
-    end
-    
+        
   end
   
   
