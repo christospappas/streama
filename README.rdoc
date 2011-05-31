@@ -12,16 +12,16 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
 
 Create an Activity model and define the activities and the fields you would like to cache within the activity.
 
-class Activity
-  include Streama::Activity
+  class Activity
+    include Streama::Activity
   
-  activity :enquiry do
-    actor :user, :cache => [:full_name]
-    target :enquiry, :cache => [:subject]
-    referrer :listing, :cache => [:title]
+    activity :enquiry do
+      actor :user, :cache => [:full_name]
+      target :enquiry, :cache => [:subject]
+      referrer :listing, :cache => [:title]
+    end
+  
   end
-  
-end
 
 === Setup Actors
 
