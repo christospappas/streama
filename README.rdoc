@@ -27,10 +27,10 @@ An activity consists of an actor, a verb, an object, and a target.
 
 The activity verb is implied from the activity name, in the above example the verb is :new_enquiry
 
-the object may be the entity performing the activity, or the entity on which the activity was performed.
+The object may be the entity performing the activity, or the entity on which the activity was performed.
 e.g John(actor) shared a video(object)
 
-The target allows you to relate the object with a target
+The target is the object that the verb is enacted on.
 e.g. Geraldine(actor) posted a photo(object) to her album(target)
 
 This is based on the Activity Streams 1.0 specification (http://activitystrea.ms)

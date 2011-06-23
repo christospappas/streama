@@ -20,23 +20,19 @@ describe "Activity" do
   end
   
   describe '#publish' do
-
-    before :each do
-      @actor = user
-      @activity = Activity.publish(:new_enquiry, {:actor => @actor, :object => enquiry, :target => listing})
-    end
     
     it "overrides the recievers if option passed" do
       send_to = []
       2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
-
-      # @activity.receivers << send_to
-      # @activity.receivers.size.should == 2
+      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receivers => send_to})
+      @activity.receivers.size.should == 2
     end
     
     context "when republishing"
       before :each do
+        @actor = user
+        @activity = Activity.publish(:new_enquiry, {:actor => @actor, :object => enquiry, :target => listing})
         @activity.publish
       end
       
@@ -45,10 +41,8 @@ describe "Activity" do
         @actor.save
         @activity.publish
         @activity.actor['full_name'].should eq "testing"
-
       end
   end
-  
   
   describe '.publish' do
     it "creates a new activity" do
