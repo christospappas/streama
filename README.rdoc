@@ -12,16 +12,28 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
 
 Create an Activity model and define the activities and the fields you would like to cache within the activity.
 
+An activity consists of an actor, a verb, an object, and a target. 
+
   class Activity
     include Streama::Activity
   
-    activity :enquiry do
+    activity :new_enquiry do
       actor :user, :cache => [:full_name]
-      target :enquiry, :cache => [:subject]
-      referrer :listing, :cache => [:title]
+      object :enquiry, :cache => [:subject, :comment]
+      target :listing, :cache => [:title]
     end
   
   end
+
+The activity verb is implied from the activity name, in the above example the verb is :new_enquiry
+
+the object may be the entity performing the activity, or the entity on which the activity was performed.
+e.g John(actor) shared a video(object)
+
+The target allows you to relate the object with a target
+e.g. Geraldine(actor) posted a photo(object) to her album(target)
+
+This is based on the Activity Streams 1.0 specification (http://activitystrea.ms)
 
 === Setup Actors
 
@@ -31,8 +43,10 @@ Include the Actor module in a class and override the default followers method.
     include Mongoid::Document
     include Streama::Actor
 
+		field :full_name, :type => String
+
     def followers
-      ...
+    	User.excludes(:id => self.id).all
     end
   end
 
@@ -46,14 +60,14 @@ Create the indexes for the Activities collection. You can do so by calling the c
 
 In your controller or background worker:
 
-  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing)
+  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing)
   
-This will publish the activity to the objects returned by the "followers" method in the Actor.
+This will publish the activity to the mongoid objects returned by the #followers method in the Actor.
 
 To send your activity to different receievers, pass in an additional :receivers parameter.
 
-  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => :friends) # calls friends method
-  current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
+  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 
 == Retrieving Activity
 
@@ -63,9 +77,9 @@ To retrieve all activity for an actor
   
 To retrieve and filter to a particular activity type
 
-  current_user.activity_stream(:type => :activity_type)
+  current_user.activity_stream(:type => :activity_verb)
 
-If you need to return the instance of an :actor, :target or :referrer from an activity call the Activity#load_instance method
+If you need to return the instance of an :actor, :object or :target from an activity call the Activity#load_instance method
 
   activity.load_instance(:actor)
   
@@ -75,7 +89,7 @@ You can also refresh the cached activity data by calling the Activity#refresh_da
   
 == Compatibility
 
-Streama is developed against Ruby 1.9.2 and Mongoid 2.0.0.rc7
+Streama is developed against Ruby 1.9.2 and Mongoid 2
 
 == TODO
 

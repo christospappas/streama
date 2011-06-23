@@ -8,5 +8,8 @@ class User
     self.class.all
   end
   
+  def followers
+    User.all
+  end
   
 end

@@ -2,14 +2,14 @@ module Streama
   
   class Definition
     
-    attr_reader :name, :actor, :target, :referrer, :receivers
+    attr_reader :name, :actor, :object, :target, :receivers
     
     # @param dsl [Streama::DefinitionDSL] A DSL object
     def initialize(definition)
       @name = definition[:name]
       @actor = definition[:actor] || {}
+      @object = definition[:object] || {}
       @target = definition[:target] || {}
-      @referrer = definition[:referrer] || {}
     end
     
     #

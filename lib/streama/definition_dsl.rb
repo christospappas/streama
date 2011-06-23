@@ -8,8 +8,8 @@ module Streama
       @attributes = {
         :name => name.to_sym,
         :actor => {}, 
-        :target => {}, 
-        :referrer => {}
+        :object => {}, 
+        :target => {}
       }
     end
     
@@ -22,7 +22,7 @@ module Streama
         end
       end
     end
-    data_methods :actor, :target, :referrer
+    data_methods :actor, :object, :target
 
   end
   

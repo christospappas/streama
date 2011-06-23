@@ -7,7 +7,7 @@ module Streama
   end
   
   # This error is raised when an object isn't defined
-  # as an actor, target or referrer
+  # as an actor, object or target
   #
   # Example:
   #
@@ -36,6 +36,9 @@ module Streama
   end
   
   class ActivityNotSaved < StreamaError
+  end
+  
+  class NoFollowersDefined < StreamaError
   end
   
 end

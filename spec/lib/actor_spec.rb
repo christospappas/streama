@@ -9,8 +9,8 @@ describe "Actor" do
   before :all do
     Activity.activity :new_comment do
       actor :user, :cache => [:full_name]
+      object :listing, :cache => [:title]
       target :listing, :cache => [:title]
-      referrer :listing, :cache => [:title]
     end
   end
   
@@ -21,12 +21,12 @@ describe "Actor" do
     end
     
     it "pushes activity to receivers" do
-      activity = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing)
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
       activity.receivers.size == 6
     end
     
     it "pushes to a defined stream" do
-      activity = user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing, :receivers => :friends)
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receivers => :friends)
       activity.receivers.size == 6
     end
     
@@ -36,8 +36,8 @@ describe "Actor" do
     
     before :each do
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
-      user.publish_activity(:new_enquiry, :target => enquiry, :referrer => listing)
-      user.publish_activity(:new_comment, :target => listing)
+      user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
+      user.publish_activity(:new_comment, :object => listing)
     end
     
     it "retrieves the stream for an actor" do

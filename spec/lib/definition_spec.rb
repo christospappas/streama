@@ -5,8 +5,8 @@ describe "Definition" do
   let(:definition_dsl) do
     dsl = Streama::DefinitionDSL.new(:new_enquiry)
     dsl.actor(:user, :cache => [:id, :full_name])
-    dsl.target(:enquiry, :cache => [:id, :full_name])
-    dsl.referrer(:listing, :cache => [:id, :name, :full_address])
+    dsl.object(:enquiry, :cache => [:id, :full_name])
+    dsl.target(:listing, :cache => [:id, :name, :full_address])
     dsl
   end
   
@@ -19,12 +19,12 @@ describe "Definition" do
     it "assigns @actor" do
       @definition.actor.has_key?(:user).should be true
     end
-    it "assigns @target" do
-      @definition.target.has_key?(:enquiry).should be true
+    it "assigns @object" do
+      @definition.object.has_key?(:enquiry).should be true
     end
     
-    it "assigns @referrer" do
-      @definition.referrer.has_key?(:listing).should be true
+    it "assigns @target" do
+      @definition.target.has_key?(:listing).should be true
     end
     
   end

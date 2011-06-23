@@ -3,8 +3,8 @@ class Activity
   
   activity :enquiry do
     actor :user, :cache => [:full_name]
-    target :enquiry, :cache => [:subject]
-    referrer :listing, :cache => [:title]
+    object :enquiry, :cache => [:subject]
+    target :listing, :cache => [:title]
   end
   
 end

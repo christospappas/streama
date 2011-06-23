@@ -21,16 +21,16 @@ describe "Definition" do
     dsl.attributes[:actor].should eq :user => { :cache=>[:id, :full_name] }, :company => { :cache=>[:id, :name] }
   end
   
-  it "adds a target to the definition" do
+  it "adds an object to the definition" do
     dsl = definition_dsl
-    dsl.target(:listing, :cache => [:id, :title])
-    dsl.attributes[:target].should eq :listing => { :cache=>[:id, :title] }
+    dsl.object(:listing, :cache => [:id, :title])
+    dsl.attributes[:object].should eq :listing => { :cache=>[:id, :title] }
   end
 
-  it "adds a referrer to the definition" do
+  it "adds a target to the definition" do
     dsl = definition_dsl
-    dsl.referrer(:company, :cache => [:id, :name])
-    dsl.attributes[:referrer].should eq :company => { :cache=>[:id, :name] }
+    dsl.target(:company, :cache => [:id, :name])
+    dsl.attributes[:target].should eq :company => { :cache=>[:id, :name] }
   end
   
 end

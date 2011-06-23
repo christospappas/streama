@@ -10,9 +10,9 @@ describe "Activity" do
     it "registers and return a valid definition" do
       @definition = Activity.activity(:new_enquiry) do
         actor :user, :cache => [:full_name]
-        target :enquiry, :cache => [:comment]
-        target :listing, :cache => [:title, :full_address]
-        referrer :listing, :cache => [:title]
+        object :enquiry, :cache => [:comment]
+        object :listing, :cache => [:title, :full_address]
+        target :listing, :cache => [:title]
       end
       
       @definition.is_a?(Streama::Definition).should be true
@@ -23,7 +23,7 @@ describe "Activity" do
 
     before :each do
       @actor = user
-      @activity = Activity.publish(:new_enquiry, {:actor => @actor, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => @actor, :object => enquiry, :target => listing})
     end
     
     it "overrides the recievers if option passed" do
@@ -52,7 +52,7 @@ describe "Activity" do
   
   describe '.publish' do
     it "creates a new activity" do
-      activity = Activity.publish(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing})
       activity.should be_an_instance_of Activity
     end
   end
@@ -61,7 +61,7 @@ describe "Activity" do
     
     before :each do
       @user = user
-      @activity = Activity.publish(:new_enquiry, {:actor => @user, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => @user, :object => enquiry, :target => listing})
     end
     
     it "reloads instances and updates activities stored data" do
@@ -79,7 +79,7 @@ describe "Activity" do
   describe '#load_instance' do
     
     before :each do
-      @activity = Activity.publish(:new_enquiry, {:actor => user, :target => enquiry, :referrer => listing})
+      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing})
       @activity = Activity.last
     end
     
@@ -87,12 +87,12 @@ describe "Activity" do
       @activity.load_instance(:actor).should be_instance_of User
     end
     
-    it "loads a target instance" do
-      @activity.load_instance(:target).should be_instance_of Enquiry
+    it "loads an object instance" do
+      @activity.load_instance(:object).should be_instance_of Enquiry
     end
     
-    it "loads a referrer instance" do
-      @activity.load_instance(:referrer).should be_instance_of Listing
+    it "loads a target instance" do
+      @activity.load_instance(:target).should be_instance_of Listing
     end
     
   end

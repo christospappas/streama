@@ -21,8 +21,8 @@ module Streama
       #
       # @param [ Hash ] options The options to publish with.
       #
-      # @example publish an activity with a target and referrer
-      #   current_user.publish_activity(:enquiry, :target => @enquiry, :referrer => @listing)
+      # @example publish an activity with a object and target
+      #   current_user.publish_activity(:enquiry, :object => @enquiry, :target => @listing)
       #
       def publish_activity(name, options={})
         options[:receivers] = self.send(options[:receivers]) if options[:receivers].is_a?(Symbol)
@@ -34,7 +34,7 @@ module Streama
       end
     
       def followers
-        self.class.all
+        raise Streama::NoFollowersDefined
       end
       
       def activity_class
