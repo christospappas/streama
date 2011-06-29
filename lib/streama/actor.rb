@@ -32,10 +32,6 @@ module Streama
       def activity_stream(options = {})
         activity_class.stream_for(self, options)
       end
-    
-      def followers
-        raise Streama::NoFollowersDefined
-      end
       
       def activity_class
         @activity_klass ||= activity_klass ? activity_klass.classify.constantize : ::Activity
