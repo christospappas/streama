@@ -60,6 +60,12 @@ module Streama
         query.merge!({:verb => options[:type]}) if options[:type]
         self.where(query).without(:receivers).desc(:created_at)
       end
+
+      def actor_stream_for(actor, options={})
+        query = { "actor.id" => actor.id, "actor.type" => actor.class.to_s }
+        query.merge!({:verb => options[:type]}) if options[:type]
+        self.where(query).desc(:created_at)
+      end
       
     end
 

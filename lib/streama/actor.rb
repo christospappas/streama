@@ -32,6 +32,11 @@ module Streama
       def activity_stream(options = {})
         activity_class.stream_for(self, options)
       end
+
+      # Returns the activity stream of the actor's own activities.
+      def actor_activity_stream(options = {})
+        activity_class.actor_stream_for(self, options)
+      end
     
       def followers
         raise Streama::NoFollowersDefined
