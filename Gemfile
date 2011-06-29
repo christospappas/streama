@@ -1,8 +1,7 @@
 source "http://rubygems.org"
 
 gem "activesupport", "~> 3.0"
-gem "mongoid", "~> 2.0.0.rc"
-gem "bson_ext", "~> 1.2"
+gem "mongoid", "~> 2.0"
 
 group :development do
   gem "rspec", "~> 2.3.0"
