@@ -32,5 +32,11 @@ describe "Definition" do
     dsl.target(:company, :cache => [:id, :name])
     dsl.attributes[:target].should eq :company => { :cache=>[:id, :name] }
   end
+
+  it "adds a receiver to the definition" do
+    dsl = definition_dsl
+    dsl.receiver(:user, :cache => [:id, :full_name])
+    dsl.attributes[:receiver].should eq :user => { :cache=>[:id, :full_name] }
+  end
   
 end

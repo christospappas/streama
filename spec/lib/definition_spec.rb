@@ -7,6 +7,7 @@ describe "Definition" do
     dsl.actor(:user, :cache => [:id, :full_name])
     dsl.object(:enquiry, :cache => [:id, :full_name])
     dsl.target(:listing, :cache => [:id, :name, :full_address])
+    dsl.receiver(:user, :cache => [])
     dsl
   end
   
@@ -25,6 +26,10 @@ describe "Definition" do
     
     it "assigns @target" do
       @definition.target.has_key?(:listing).should be true
+    end
+
+    it "assigns @receiver" do
+      @definition.receiver.has_key?(:user).should be true
     end
     
   end

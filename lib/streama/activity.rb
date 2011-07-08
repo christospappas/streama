@@ -51,7 +51,9 @@ module Streama
       #
       # @return [Streama::Activity] An Activity instance with data
       def publish(verb, data)
-        new({:verb => verb}.merge(data)).save
+        activity = new({:verb => verb}.merge(data))
+        activity.save
+        activity
       end
       
       def stream_for(actor, options={})
@@ -70,7 +72,7 @@ module Streama
 
 
     module InstanceMethods
-      
+
       # Returns an instance of an actor, object or target
       #
       # @param [ Symbol ] type The data type (actor, object, target) to return an instance for.
