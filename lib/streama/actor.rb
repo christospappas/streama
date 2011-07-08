@@ -25,7 +25,6 @@ module Streama
       #   current_user.publish_activity(:enquiry, :object => @enquiry, :target => @listing)
       #
       def publish_activity(name, options={})
-        options[:receivers] = self.send(options[:receivers]) if options[:receivers].is_a?(Symbol)
         activity = activity_class.publish(name, {:actor => self}.merge(options))
       end
     

@@ -9,7 +9,8 @@ module Streama
         :name => name.to_sym,
         :actor => {}, 
         :object => {}, 
-        :target => {}
+        :target => {},
+        :receiver => {}
       }
     end
     
@@ -22,7 +23,7 @@ module Streama
         end
       end
     end
-    data_methods :actor, :object, :target
+    data_methods :actor, :object, :target, :receiver
 
   end
   
