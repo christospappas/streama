@@ -23,6 +23,7 @@ An activity consists of an actor, a verb, an object, and a target.
       actor :user, :cache => [:full_name]
       object :enquiry, :cache => [:subject, :comment]
       target :listing, :cache => [:title]
+      receiver :user, :cache => []
     end
   
   end
@@ -62,14 +63,21 @@ Create the indexes for the Activities collection. You can do so by calling the c
 
 In your controller or background worker:
 
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing)
+  current_user.followers.each do |receiver|
+    current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receiver => receiver)
+  end
   
 This will publish the activity to the mongoid objects returned by the #followers method in the Actor.
 
-To send your activity to different receievers, pass in an additional :receivers parameter.
+To send your activity to different receievers, call publish_activity for each receiver.
 
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+  current_user.friends.each do |receiver|
+    current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receiver => receiver)
+  end
+
+  current_user.find(:all, :conditions => {:group_id => mygroup}).each do |receiver|
+    current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receiver => receiver)
+  end
 
 == Retrieving Activity
 
