@@ -14,8 +14,22 @@ describe "Actor" do
       receiver :user, :cache => []
     end
   end
-  
+
   describe "#publish_activity" do
+
+    before :each do
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+    end
+
+    it "pushes activity to receivers" do
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
+
+      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == user.followers.size
+    end
+
+  end
+
+  describe "#publish_activity_with_receiver" do
 
     receivers = []
 
@@ -31,6 +45,36 @@ describe "Actor" do
       Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == receivers.size
     end
     
+  end
+
+  describe "#publish_activity_with_receivers" do
+
+    receivers = []
+
+    before :each do
+      5.times { |n| receivers << User.create(:full_name => "Receiver #{n}") }
+    end
+
+    it "pushes activity to receivers" do
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receivers => receivers)
+
+      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == receivers.size
+    end
+
+  end
+
+  describe "#publish_activity_with_receivers_symbol" do
+
+    before :each do
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+    end
+
+    it "pushes activity to receivers" do
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receivers => :friends)
+
+      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == user.friends.size
+    end
+
   end
   
   describe "#activity_stream" do
