@@ -27,8 +27,8 @@ describe "Activity" do
       send_to = []
       2.times { |n| send_to << User.create(:full_name => "Custom Receiver #{n}") }
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
-      @activities = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receivers => send_to})
-      @activities.size.should == send_to.size
+      Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receivers => send_to})
+      Activity.count.should == send_to.size
     end
     
   #  context "when republishing"
@@ -48,13 +48,14 @@ describe "Activity" do
   
   describe '.publish' do
     it "creates a new activity with single receiver" do
-      activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receiver => receiver})[0]
-      activity.should be_an_instance_of Activity
+      Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receiver => receiver})
+      Activity.count.should == 1
     end
 
     it "creates new activities" do
-      activities = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing})
-      activities.size.should == user.followers.size
+      Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing})
+      activities = Activity.all
+      activities.count.should == user.followers.size
       activities.each do |activity|
         activity.should be_an_instance_of Activity
       end
@@ -63,23 +64,24 @@ describe "Activity" do
 
   describe '#refresh' do
 
-    @activities = []
-
     before :each do
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
       @user = user
-      @activities = Activity.publish(:new_enquiry, {:actor => @user, :object => enquiry, :target => listing})
+      @full_name = @user.full_name
+      Activity.publish(:new_enquiry, {:actor => @user, :object => enquiry, :target => listing})
     end
-    
-    it "reloads instances and updates activities stored data" do
-      @activities.each do |activity|
-        activity.save
-        activity = Activity.last
 
-        expect do
-          @user.update_attribute(:full_name, "Test")
-          activity.refresh_data
-        end.to change{ activity.load_instance(:actor).full_name}.from("Christos").to("Test")
-      end
+    it "reloads instances and updates activities stored data" do
+      # Load actor's activities
+      @activities = Activity.where({ "actor.id" => @user.id, "actor.type" => @user.class.to_s })
+      @activities.count.should == @user.followers.size
+
+      activity = @activities.first
+
+      expect do
+        @user.update_attribute(:full_name, "Test")
+        activity.refresh_data
+      end.to change{ activity.load_instance(:actor).full_name}.from(@full_name).to("Test")
     end
     
   end
@@ -87,7 +89,7 @@ describe "Activity" do
   describe '#load_instance' do
 
     before :each do
-      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receiver => receiver})[0]
+      Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target => listing, :receiver => receiver})
       @activity = Activity.last
     end
     
