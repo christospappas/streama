@@ -25,21 +25,10 @@ module Streama
       #   current_user.publish_activity(:enquiry, :object => @enquiry, :target => @listing)
       #
       def publish_activity(name, options={})
-        if options[:receiver]
-          activity = activity_class.publish(name, {:actor => self}.merge(options))
-        else
-          if options[:receivers]
-            receivers = options.delete(:receivers)
-            receivers = self.send(receivers) if receivers.is_a?(Symbol)
-          else
-            receivers = self.followers
-          end
-
-          receivers.each do |receiver|
-            activity = activity_class.publish(name, {:actor => self, :receiver => receiver}.merge(options))
-          end
-
+        if options[:receivers]
+          options[:receivers] = self.send(options[:receivers]) if options[:receivers].is_a?(Symbol)
         end
+        activity = activity_class.publish(name, {:actor => self}.merge(options))
       end
     
       def activity_stream(options = {})

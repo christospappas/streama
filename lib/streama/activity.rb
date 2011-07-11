@@ -49,11 +49,30 @@ module Streama
       # @param [ String ] verb The verb of the activity
       # @param [ Hash ] data The data to initialize the activity with.
       #
-      # @return [Streama::Activity] An Activity instance with data
+      # @return [Streama::Activity] An array of Activity instances with data
       def publish(verb, data)
-        activity = new({:verb => verb}.merge(data))
-        activity.save
-        activity
+
+        activities = []
+
+        if data[:receiver]
+          activity = new({:verb => verb}.merge(data))
+          activity.save
+          activities << activity
+        else
+          if data[:receivers]
+            receivers = data.delete(:receivers)
+          else
+            receivers = data[:actor].followers
+          end
+
+          receivers.each do |receiver|
+            activity = new({:verb => verb, :receiver => receiver}.merge(data))
+            activity.save
+            activities << activity
+          end
+        end
+
+        activities
       end
       
       def stream_for(actor, options={})
