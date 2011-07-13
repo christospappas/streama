@@ -13,6 +13,13 @@ describe "Actor" do
       target :listing, :cache => [:title]
       receiver :user, :cache => []
     end
+
+    Activity.activity :new_enquiry do
+      actor :user, :cache => [:full_name]
+      object :enquiry, :cache => [:comment]
+      target :listing, :cache => [:title]
+      receiver :user, :cache => []
+    end
   end
 
   describe "#publish_activity" do

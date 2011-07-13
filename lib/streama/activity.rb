@@ -51,20 +51,24 @@ module Streama
       def publish(verb, data)
 
         if data[:receiver]
-          activity = new({:verb => verb}.merge(data))
-          activity.save
+          receiver = data.delete(:receiver)
+          receivers = [ receiver ]
         else
           if data[:receivers]
             receivers = data.delete(:receivers)
           else
             receivers = data[:actor].followers
           end
-
-          receivers.each do |receiver|
-            activity = new({:verb => verb, :receiver => receiver}.merge(data))
-            activity.save
-          end
         end
+
+        #receivers.each do |receiver|
+        #  activity = new({:verb => verb, :receiver => receiver}.merge(data))
+        #  activity.save
+        #end
+
+        # Instead of iterating through all receivers and creating Mongoid objects for each activity
+        # we're going to drop into the Mongo Ruby driver and use the batch insert for performance.
+        batch_insert(verb, data, receivers)
 
       end
       
@@ -72,6 +76,47 @@ module Streama
         query = { "receiver.id" => actor.id, "receiver.type" => actor.class.to_s }
         query.merge!({:verb => options[:type]}) if options[:type]
         self.where(query).desc(:created_at)
+      end
+
+      # Helper function called by publish to do batch insertions
+      def batch_insert(verb, options, receivers)
+        max_batch_size = 500
+        definition = Streama::Definition.find(verb)
+
+        # Need to construct the hash to pass into Mongo Ruby driver's batch insert
+        batch = []
+        receivers.each do |receiver|
+          options[:receiver] = receiver
+
+          activity = {}
+          activity["verb"] = verb
+
+          options.each_pair do |key,val|
+            keyString = key.to_s
+            activity[keyString] = {}
+            activity[keyString]["type"] = val.class.to_s
+            activity[keyString]["id"] = val._id
+
+            definitionObj = definition.send key
+
+            cacheFields = definitionObj[val.class.to_s.downcase.to_sym][:cache]
+            cacheFields.each do |field|
+              activity[keyString][field.to_s] = val.send field
+            end
+          end
+
+          activity["updated_at"] = Time.now
+
+          batch << activity
+
+          if batch.size % max_batch_size == 0
+            self.collection.insert(batch)
+            batch = []
+          end
+        end
+
+        # Perform the batch insert
+        self.collection.insert(batch)
       end
 
     end

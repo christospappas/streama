@@ -12,7 +12,6 @@ describe "Activity" do
       @definition = Activity.activity(:new_enquiry) do
         actor :user, :cache => [:full_name]
         object :enquiry, :cache => [:comment]
-        object :listing, :cache => [:title, :full_address]
         target :listing, :cache => [:title]
         receiver :user, :cache => [:full_name]
       end
@@ -125,28 +124,31 @@ describe "Activity" do
 
     it "batch insert" do
 
+      options = {:verb => :enquiry, :receiver => user, :actor => user, :object => enquiry, :target => listing}
+
+      verb = options.delete(:verb)
+      definition = Streama::Definition.find(verb)
+
       batch = []
       (1..num_followers).each do |n|
         activity = {}
-        activity["actor"] = {}
-        activity["actor"]["type"] = user.class.to_s
-        activity["actor"]["id"] = user._id
-        activity["actor"]["full_name"] = user.full_name
+        activity["verb"] = verb
 
-        activity["object"] = {}
-        activity["object"]["type"] = enquiry.class.to_s
-        activity["object"]["id"] = enquiry._id
-        activity["object"]["comment"] = enquiry.comment
+        options.each_pair do |key,val|
+          keyString = key.to_s
+          activity[keyString] = {}
+          activity[keyString]["type"] = val.class.to_s
+          activity[keyString]["id"] = val._id
 
-        activity["target"] = {}
-        activity["target"]["type"] = listing.class.to_s
-        activity["target"]["id"] = listing._id
-        activity["target"]["title"] = listing.title
+          definitionObj = definition.send key
 
-        activity["receiver"] = {}
-        activity["receiver"]["id"] = receiver._id
-        activity["receiver"]["type"] = receiver.class.to_s
+          cacheFields = definitionObj[val.class.to_s.downcase.to_sym][:cache]
+          cacheFields.each do |field|
+            activity[keyString][field.to_s] = val.send field
+          end
+        end
 
+        activity["updated_at"] = Time.now
         batch << activity
 
         if batch.size % max_batch_size == 0
@@ -164,6 +166,9 @@ describe "Activity" do
         a.load_instance(:object).should be_instance_of Enquiry
         a.load_instance(:target).should be_instance_of Listing
         a.load_instance(:receiver).should be_instance_of User
+
+        a.verb.should == :enquiry
+        a.updated_at.should be_instance_of Time
       end
     end
   end
@@ -190,46 +195,23 @@ describe "Activity" do
       batch = []
       (1..num_followers).each do |n|
         activity = {}
+        activity["verb"] = verb
 
-        activity["actor"] = {}
-        activity["actor"]["type"] = user.class.to_s
-        activity["actor"]["id"] = user._id
-        #activity["actor"]["full_name"] = user.full_name
+        options.each_pair do |key,val|
+          keyString = key.to_s
+          activity[keyString] = {}
+          activity[keyString]["type"] = val.class.to_s
+          activity[keyString]["id"] = val._id
 
-        cacheFields = definition.actor[user.class.to_s.downcase.to_sym][:cache]
-        cacheFields.each do |field|
-          activity["actor"][field.to_s] = user.send field
+          definitionObj = definition.send key
+
+          cacheFields = definitionObj[val.class.to_s.downcase.to_sym][:cache]
+          cacheFields.each do |field|
+            activity[keyString][field.to_s] = val.send field
+          end
         end
 
-        activity["object"] = {}
-        activity["object"]["type"] = enquiry.class.to_s
-        activity["object"]["id"] = enquiry._id
-        #activity["object"]["comment"] = enquiry.comment
-
-        cacheFields = definition.object[enquiry.class.to_s.downcase.to_sym][:cache]
-        cacheFields.each do |field|
-          activity["object"][field.to_s] = enquiry.send field
-        end
-
-        activity["target"] = {}
-        activity["target"]["type"] = listing.class.to_s
-        activity["target"]["id"] = listing._id
-        #activity["target"]["title"] = listing.title
-
-        cacheFields = definition.target[listing.class.to_s.downcase.to_sym][:cache]
-        cacheFields.each do |field|
-          activity["target"][field.to_s] = listing.send field
-        end
-
-        activity["receiver"] = {}
-        activity["receiver"]["id"] = receiver._id
-        #activity["receiver"]["type"] = receiver.class.to_s
-
-        cacheFields = definition.receiver[receiver.class.to_s.downcase.to_sym][:cache]
-        cacheFields.each do |field|
-          activity["receiver"][field.to_s] = receiver.send field
-        end
-
+        activity["updated_at"] = Time.now
         batch << activity
 
         if batch.size % max_batch_size == 0
