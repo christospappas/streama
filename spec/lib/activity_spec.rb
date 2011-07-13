@@ -110,5 +110,111 @@ describe "Activity" do
     end
     
   end
+
+  describe 'batch insertion test' do
+
+    max_batch_size = 5
+    num_followers = 10
+
+    it "no batch insert" do
+
+      (1..num_followers).each do |n|
+        activity = Activity.new({:verb => :enquiry, :receiver => user, :actor => user, :object => enquiry, :target => listing})
+      end
+    end
+
+    it "batch insert" do
+
+      batch = []
+      (1..num_followers).each do |n|
+        activity = {}
+        activity["actor"] = {}
+        activity["actor"]["type"] = user.class.to_s
+        activity["actor"]["id"] = user._id
+        activity["actor"]["full_name"] = user.full_name
+
+        activity["object"] = {}
+        activity["object"]["type"] = enquiry.class.to_s
+        activity["object"]["id"] = enquiry._id
+        activity["object"]["comment"] = enquiry.comment
+
+        activity["target"] = {}
+        activity["target"]["type"] = listing.class.to_s
+        activity["target"]["id"] = listing._id
+        activity["target"]["title"] = listing.title
+
+        activity["receiver"] = {}
+        activity["receiver"]["id"] = receiver._id
+        activity["receiver"]["type"] = receiver.class.to_s
+
+        batch << activity
+
+        if batch.size % max_batch_size == 0
+          Activity.collection.insert(batch)
+          batch = []
+        end
+      end
+
+      Activity.collection.insert(batch)
+
+      Activity.count.should == num_followers
+      Activity.all.each do |a|
+
+        a.load_instance(:actor).should be_instance_of User
+        a.load_instance(:object).should be_instance_of Enquiry
+        a.load_instance(:target).should be_instance_of Listing
+        a.load_instance(:receiver).should be_instance_of User
+      end
+    end
+  end
+
+  describe 'batch insertion performance test' do
+
+    max_batch_size = 500
+    num_followers = 2000
+
+    it "no batch insert" do
+
+      (1..num_followers).each do |n|
+        activity = Activity.new({:verb => :enquiry, :receiver => user, :actor => user, :object => enquiry, :target => listing})
+      end
+    end
+
+    it "batch insert" do
+
+      batch = []
+      (1..num_followers).each do |n|
+        activity = {}
+        activity["actor"] = {}
+        activity["actor"]["type"] = user.class.to_s
+        activity["actor"]["id"] = user._id
+        activity["actor"]["full_name"] = user.full_name
+
+        activity["object"] = {}
+        activity["object"]["type"] = enquiry.class.to_s
+        activity["object"]["id"] = enquiry._id
+        activity["object"]["comment"] = enquiry.comment
+
+        activity["target"] = {}
+        activity["target"]["type"] = listing.class.to_s
+        activity["target"]["id"] = listing._id
+        activity["target"]["title"] = listing.title
+
+        activity["receiver"] = {}
+        activity["receiver"]["id"] = receiver._id
+        activity["receiver"]["type"] = receiver.class.to_s
+
+        batch << activity
+
+        if batch.size % max_batch_size == 0
+          Activity.collection.insert(batch)
+          batch = []
+        end
+      end
+
+      Activity.collection.insert(batch)
+    end
+
+  end
   
 end
