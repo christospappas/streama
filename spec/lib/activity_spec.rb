@@ -148,7 +148,8 @@ describe "Activity" do
           end
         end
 
-        activity["updated_at"] = Time.now
+        activity["created_at"] = Time.now
+        activity["updated_at"] = activity["created_at"]
         batch << activity
 
         if batch.size % max_batch_size == 0
@@ -168,6 +169,7 @@ describe "Activity" do
         a.load_instance(:receiver).should be_instance_of User
 
         a.verb.should == :enquiry
+        a.created_at.should be_instance_of Time
         a.updated_at.should be_instance_of Time
       end
     end
@@ -211,7 +213,8 @@ describe "Activity" do
           end
         end
 
-        activity["updated_at"] = Time.now
+        activity["created_at"] = Time.now
+        activity["updated_at"] = activity["created_at"]
         batch << activity
 
         if batch.size % max_batch_size == 0

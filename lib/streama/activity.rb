@@ -105,7 +105,8 @@ module Streama
             end
           end
 
-          activity["updated_at"] = Time.now
+          activity["created_at"] = Time.now
+          activity["updated_at"] = activity["created_at"]
 
           batch << activity
 
