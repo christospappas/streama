@@ -17,7 +17,7 @@ module Streama
       index [['actor._id', Mongo::ASCENDING], ['actor._type', Mongo::ASCENDING]]
       index [['object._id', Mongo::ASCENDING], ['object._type', Mongo::ASCENDING]]
       index [['target._id', Mongo::ASCENDING], ['target._type', Mongo::ASCENDING]]
-      index [['receiver._id', Mongo::ASCENDING], ['receiver._type', Mongo::ASCENDING]]
+      index [['receiver._id', Mongo::ASCENDING], ['receiver._type', Mongo::ASCENDING], ['created_at', Mongo::DESCENDING]]
           
       validates_presence_of :actor, :verb
       before_save :assign_data
