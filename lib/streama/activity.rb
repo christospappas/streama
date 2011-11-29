@@ -77,6 +77,12 @@ module Streama
         query.merge!({:verb => options[:type]}) if options[:type]
         self.where(query).desc(:created_at)
       end
+      
+      def actor_stream_for(actor, options={})
+        query = { "receiver.id" => actor.id, "receiver.type" => actor.class.to_s, "actor.id" => actor.id }
+        query.merge!({:verb => options[:type]}) if options[:type]
+        self.where(query).desc(:created_at)
+      end
 
       # Helper function called by publish to do batch insertions
       def batch_insert(verb, options, receivers)
