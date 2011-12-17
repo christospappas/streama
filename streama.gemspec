@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{streama}
-  s.version = "0.3.2"
+  s.name = "streama"
+  s.version = "0.3.2.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Christos Pappas"]
-  s.date = %q{2011-06-29}
-  s.description = %q{Streama is a simple activity stream gem for use with the Mongoid ODM framework.}
-  s.email = %q{christos.pappas@gmail.com}
+  s.date = "2011-11-29"
+  s.description = "Streama is a simple activity stream gem for use with the Mongoid ODM framework."
+  s.email = "christos.pappas@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -42,11 +42,11 @@ Gem::Specification.new do |s|
     "spec/support/models/user.rb",
     "streama.gemspec"
   ]
-  s.homepage = %q{http://github.com/christospappas/streama}
+  s.homepage = "http://github.com/christospappas/streama"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Streama is a simple activity stream gem for use with the Mongoid ODM framework.}
+  s.rubygems_version = "1.8.10"
+  s.summary = "Streama is a simple activity stream gem for use with the Mongoid ODM framework."
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
