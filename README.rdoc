@@ -1,8 +1,8 @@
 = Streama
 
-Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
+**ALPHA**
 
-**UPDATE: Streama now conforms to the activitystrea.ms specification. Version 0.3.0 breaks compatibility with previous versions.**
+Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
 
 == Install
 
