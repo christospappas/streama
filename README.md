@@ -8,8 +8,8 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
 
 ## Install
 
-  $ gem install streama
-  
+    gem install streama
+
 ## Usage
 
 ### Define Activities
@@ -18,16 +18,18 @@ Create an Activity model and define the activities and the fields you would like
 
 An activity consists of an actor, a verb, an object, and a target. 
 
-  class Activity
-    include Streama::Activity
-  
-    activity :new_enquiry do
-      actor :user, :cache => [:full_name]
-      object :enquiry, :cache => [:subject, :comment]
-      target :listing, :cache => [:title]
-    end
-  
+``` ruby
+class Activity
+  include Streama::Activity
+
+  activity :new_enquiry do
+    actor :user, :cache => [:full_name]
+    object :enquiry, :cache => [:subject, :comment]
+    target :listing, :cache => [:title]
   end
+
+end
+```
 
 The activity verb is implied from the activity name, in the above example the verb is :new_enquiry
 
@@ -43,53 +45,71 @@ This is based on the Activity Streams 1.0 specification (http://activitystrea.ms
 
 Include the Actor module in a class and override the default followers method.
 
-  class User
-    include Mongoid::Document
-    include Streama::Actor
+``` ruby
+class User
+	include Mongoid::Document
+	include Streama::Actor
 
-		field :full_name, :type => String
+	field :full_name, :type => String
 
-    def followers
-    	User.excludes(:id => self.id).all
-    end
-  end
+	def followers
+		User.excludes(:id => self.id).all
+	end
+end
+```
 
 ### Setup Indexes
 
 Create the indexes for the Activities collection. You can do so by calling the create_indexes method.
 
-  Activity.create_indexes
+``` ruby
+Activity.create_indexes
+```
 
 ### Publishing Activity
 
 In your controller or background worker:
 
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing)
+``` ruby
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing)
+```
   
 This will publish the activity to the mongoid objects returned by the #followers method in the Actor.
 
 To send your activity to different receievers, pass in an additional :receivers parameter.
 
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
-  current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+``` ruby
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
+```
+
+``` ruby
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+```
 
 ## Retrieving Activity
 
 To retrieve all activity for an actor
-  
-  current_user.activity_stream
+
+``` ruby
+current_user.activity_stream
+```
   
 To retrieve and filter to a particular activity type
 
-  current_user.activity_stream(:type => :activity_verb)
-
+``` ruby
+current_user.activity_stream(:type => :activity_verb)
+```
 If you need to return the instance of an :actor, :object or :target from an activity call the Activity#load_instance method
 
-  activity.load_instance(:actor)
+``` ruby
+activity.load_instance(:actor)
+```
   
 You can also refresh the cached activity data by calling the Activity#refresh_data method
-  
-  activity.refresh_data
+
+``` ruby  
+activity.refresh_data
+```
 
 # Contributing
 
