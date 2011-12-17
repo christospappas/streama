@@ -1,16 +1,18 @@
-= Streama
+# Streama
 
 **ALPHA**
 
 Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
 
-== Install
+[![travis](https://secure.travis-ci.org/christospappas/streama.png)](http://travis-ci.org/christospappas/streama)
+
+## Install
 
   $ gem install streama
   
-== Usage
+## Usage
 
-=== Define Activities
+### Define Activities
 
 Create an Activity model and define the activities and the fields you would like to cache within the activity.
 
@@ -37,7 +39,7 @@ e.g. Geraldine(actor) posted a photo(object) to her album(target)
 
 This is based on the Activity Streams 1.0 specification (http://activitystrea.ms)
 
-=== Setup Actors
+### Setup Actors
 
 Include the Actor module in a class and override the default followers method.
 
@@ -52,13 +54,13 @@ Include the Actor module in a class and override the default followers method.
     end
   end
 
-=== Setup Indexes
+### Setup Indexes
 
 Create the indexes for the Activities collection. You can do so by calling the create_indexes method.
 
   Activity.create_indexes
 
-=== Publishing Activity
+### Publishing Activity
 
 In your controller or background worker:
 
@@ -71,7 +73,7 @@ To send your activity to different receievers, pass in an additional :receivers 
   current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
   current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 
-== Retrieving Activity
+## Retrieving Activity
 
 To retrieve all activity for an actor
   
@@ -88,27 +90,17 @@ If you need to return the instance of an :actor, :object or :target from an acti
 You can also refresh the cached activity data by calling the Activity#refresh_data method
   
   activity.refresh_data
-  
-== Compatibility
 
-Streama is developed against Ruby 1.9.2 and Mongoid 2
+# Contributing
 
-== TODO
+Once you've made your great commits
 
-* Write more documentation, YARD
-* Write more tests
-* Benchmarks
+1. Fork
+1. Create a topic branch - git checkout -b my_branch
+1. Push to your branch - git push origin my_branch
+1. Create a Pull Request from your branch
+1. That's it!
 
-= License
+# Contributors
 
-Copyright © 2011 Christos Pappas
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-= Credits
-
-Christos Pappas: christos dot pappas at gmail dot com
+* Christos Pappas		(@christospappas)
