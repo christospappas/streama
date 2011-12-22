@@ -28,9 +28,18 @@ module Streama
         options[:receivers] = self.send(options[:receivers]) if options[:receivers].is_a?(Symbol)
         activity = activity_class.publish(name, {:actor => self}.merge(options))
       end
-    
+      
       def activity_stream(options = {})
+        p "Streama actor#activity_stream is deprecated in favor of actor#incoming_activity"
+        incoming_activity options
+      end
+    
+      def incoming_activity(options = {})
         activity_class.stream_for(self, options)
+      end
+      
+      def outgoing_activity(options = {})
+        activity_class.stream_of(self, options)
       end
       
       def activity_class

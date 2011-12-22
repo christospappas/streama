@@ -32,7 +32,7 @@ describe "Actor" do
     
   end
   
-  describe "#activity_stream" do
+  describe "#incoming_activity" do
     
     before :each do
       5.times { |n| User.create(:full_name => "Receiver #{n}") }
@@ -41,14 +41,33 @@ describe "Actor" do
     end
     
     it "retrieves the stream for an actor" do
-      user.activity_stream.size.should eq 2
+      # todo: check receiver incoming instead
+      user.incoming_activity.size.should eq 2
     end
     
     it "retrieves the stream and filters to a particular activity type" do
-      user.activity_stream(:type => :new_comment).size.should eq 1
+      # todo: check receiver incoming instead
+      user.incoming_activity(:type => :new_comment).size.should eq 1
     end
         
   end
   
+  describe "#outgoing_activity" do
+    
+    before :each do
+      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+      user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
+      user.publish_activity(:new_comment, :object => listing)
+    end
+    
+    it "retrieves the stream for an actor" do
+      user.outgoing_activity.size.should eq 2
+    end
+    
+    it "retrieves the stream and filters to a particular activity type" do
+      user.outgoing_activity(:type => :new_comment).size.should eq 1
+    end
+        
+  end
   
 end
