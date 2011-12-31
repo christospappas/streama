@@ -104,7 +104,7 @@ module Streama
       
           hash = {'id' => object.id, 'type' => object.class.name}
                 
-          if fields = definition.send(type)[class_sym][:cache]
+          if fields = definition.send(type)[class_sym].try(:[],:cache)
             fields.each do |field|
               raise Streama::InvalidField.new(field) unless object.respond_to?(field)
               hash[field.to_s] = object.send(field)
