@@ -100,7 +100,7 @@ module Streama
       protected
         
       def assign_data
-      
+        # this is what acts upon the spec in your activity.rb
         [:actor, :object, :target].each do |type|
           next unless object = load_instance(type)
 
