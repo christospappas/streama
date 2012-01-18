@@ -24,14 +24,31 @@ describe "Actor" do
 
   describe "#publish_activity" do
 
+    receivers = []
     before :each do
-      5.times { |n| User.create(:full_name => "Receiver #{n}") }
+      5.times { |n| receivers << User.create(:full_name => "Receiver #{n}") }
     end
 
     it "pushes activity to receivers" do
       activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
 
-      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == user.followers.size
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).count == user.followers.size
+    end
+
+    it "should have activities with the same created_at timestamps" do
+      activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing)
+
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).count.should > 0
+
+      # Make sure all the created_at timestamps are the same
+      timestamp = nil
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).each do |activity|
+        if !timestamp
+          timestamp = activity.created_at
+        else
+          timestamp.should == activity.created_at
+        end
+      end
     end
 
   end
@@ -49,7 +66,7 @@ describe "Actor" do
         activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receiver => receiver)
       end
 
-      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == receivers.size
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).count.should == receivers.size
     end
     
   end
@@ -65,7 +82,7 @@ describe "Actor" do
     it "pushes activity to receivers" do
       activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receivers => receivers)
 
-      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == receivers.size
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).count.should == receivers.size
     end
 
   end
@@ -79,7 +96,7 @@ describe "Actor" do
     it "pushes activity to receivers" do
       activity = user.publish_activity(:new_enquiry, :object => enquiry, :target => listing, :receivers => :friends)
 
-      Activity.where({ "receiver.id" => user.id, "receiver.type" => user.class.to_s }).count == user.friends.size
+      Activity.where({ "actor.id" => user.id, "actor.type" => user.class.to_s }).count.should == user.friends.size
     end
 
   end
@@ -103,6 +120,5 @@ describe "Actor" do
     end
         
   end
-  
-  
+
 end
