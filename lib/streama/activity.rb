@@ -89,6 +89,9 @@ module Streama
         max_batch_size = 500
         definition = Streama::Definition.find(verb)
 
+        # We're going to use the same activity timestamp for all our activities.
+        activity_timestamp = Time.now
+
         # Need to construct the hash to pass into Mongo Ruby driver's batch insert
         batch = []
         receivers.each do |receiver|
@@ -111,8 +114,8 @@ module Streama
             end
           end
 
-          activity["created_at"] = Time.now
-          activity["updated_at"] = activity["created_at"]
+          activity["created_at"] = activity_timestamp
+          activity["updated_at"] = activity_timestamp
 
           batch << activity
 
