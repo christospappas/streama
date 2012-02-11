@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe "Definition" do
   
-  let(:definition_dsl) {Streama::DefinitionDSL.new(:new_enquiry)}
+  let(:definition_dsl) {Streama::DefinitionDSL.new(:new_photo)}
   
   it "initializes with name" do
-    definition_dsl.attributes[:name].should eq :new_enquiry
+    definition_dsl.attributes[:name].should eq :new_photo
   end
   
   it "adds an actor to the definition" do
@@ -23,8 +23,8 @@ describe "Definition" do
   
   it "adds an object to the definition" do
     dsl = definition_dsl
-    dsl.object(:listing, :cache => [:id, :title])
-    dsl.attributes[:object].should eq :listing => { :cache=>[:id, :title] }
+    dsl.object(:photo_album, :cache => [:id, :title])
+    dsl.attributes[:object].should eq :photo_album => { :cache=>[:id, :title] }
   end
 
   it "adds a target to the definition" do
