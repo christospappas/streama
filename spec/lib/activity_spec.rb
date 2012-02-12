@@ -42,7 +42,7 @@ describe "Activity" do
       
     end
     
-    it "overrides the recievers if option passed" do
+    it "overrides the receivers if option passed" do
       @activity = Activity.publish(:new_photo, {:actor => user, :object => photo, :target => photo_album, :receivers => @send_to})
       @activity.receivers.size.should == 2
     end
@@ -83,9 +83,9 @@ describe "Activity" do
       @activity = Activity.last    
       
       expect do
-        @user.update_attribute(:full_name, "Test")
+        @user.update_attribute(:full_name, "Jessie Jones")
         @activity.refresh_data
-      end.to change{ @activity.load_instance(:actor).full_name}.from("Martin Smith").to("Test")
+      end.to change{ @activity.load_instance(:actor).full_name}.from("Martin Smith").to("Jessie Jones")
     end
     
   end
@@ -102,11 +102,11 @@ describe "Activity" do
     end
     
     it "loads an object instance" do
-      @activity.load_instance(:object).should be_instance_of photo
+      @activity.load_instance(:object).should be_instance_of Photo
     end
     
     it "loads a target instance" do
-      @activity.load_instance(:target).should be_instance_of photo_album
+      @activity.load_instance(:target).should be_instance_of PhotoAlbum
     end
     
   end
