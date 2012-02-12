@@ -25,7 +25,7 @@ class Activity
   activity :new_enquiry do
     actor :user, :cache => [:full_name]
     object :enquiry, :cache => [:subject, :comment]
-    target :listing, :cache => [:title]
+    target_object :listing, :cache => [:title]
   end
 
 end
@@ -71,7 +71,7 @@ Activity.create_indexes
 In your controller or background worker:
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing)
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing)
 ```
   
 This will publish the activity to the mongoid objects returned by the #followers method in the Actor.
@@ -79,11 +79,11 @@ This will publish the activity to the mongoid objects returned by the #followers
 To send your activity to different receievers, pass in an additional :receivers parameter.
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing, :receivers => :friends) # calls friends method
 ```
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 ```
 
 ## Retrieving Activity
@@ -99,7 +99,7 @@ To retrieve and filter to a particular activity type
 ``` ruby
 current_user.activity_stream(:type => :activity_verb)
 ```
-If you need to return the instance of an :actor, :object or :target from an activity call the Activity#load_instance method
+If you need to return the instance of an :actor, :object or :target_object from an activity call the Activity#load_instance method
 
 ``` ruby
 activity.load_instance(:actor)

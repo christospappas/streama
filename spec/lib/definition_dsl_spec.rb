@@ -29,8 +29,8 @@ describe "Definition" do
 
   it "adds a target to the definition" do
     dsl = definition_dsl
-    dsl.target(:company, :cache => [:id, :name])
-    dsl.attributes[:target].should eq :company => { :cache=>[:id, :name] }
+    dsl.target_object(:company, :cache => [:id, :name])
+    dsl.attributes[:target_object].should eq :company => { :cache=>[:id, :name] }
   end
   
 end
