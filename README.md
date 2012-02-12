@@ -111,7 +111,7 @@ You can also refresh the cached activity data by calling the Activity#refresh_da
 activity.refresh_data
 ```
 
-# Upgrading
+## Upgrading
 
 ### 0.3.3
 
@@ -119,7 +119,7 @@ The Activity "target" field was renamed to "target_object". If you are upgrading
 
 http://www.mongodb.org/display/DOCS/Updating#Updating-%24rename
 
-# Contributing
+## Contributing
 
 Once you've made your great commits
 
@@ -129,6 +129,6 @@ Once you've made your great commits
 1. Create a Pull Request from your branch
 1. That's it!
 
-# Contributors
+## Contributors
 
 * Christos Pappas		(@christospappas)
