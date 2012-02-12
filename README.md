@@ -111,6 +111,14 @@ You can also refresh the cached activity data by calling the Activity#refresh_da
 activity.refresh_data
 ```
 
+# Upgrading
+
+## 0.3.3
+
+The Activity "target" field was renamed to "target_object". If you are upgrading from a previous version of Streama you will need to rename the field in existing documents.
+
+http://www.mongodb.org/display/DOCS/Updating#Updating-%24rename
+
 # Contributing
 
 Once you've made your great commits
