@@ -33,4 +33,10 @@ describe "Definition" do
     dsl.attributes[:target_object].should eq :company => { :cache=>[:id, :name] }
   end
   
+  it "deprecates target method" do
+    dsl = definition_dsl
+    dsl.target(:company, :cache => [:id, :name])
+    dsl.attributes[:target_object].should eq :company => { :cache=>[:id, :name] }
+  end
+  
 end
