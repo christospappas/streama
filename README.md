@@ -22,16 +22,16 @@ An activity consists of an actor, a verb, an object, and a target.
 class Activity
   include Streama::Activity
 
-  activity :new_enquiry do
+  activity :new_photo do
     actor :user, :cache => [:full_name]
-    object :enquiry, :cache => [:subject, :comment]
-    target_object :listing, :cache => [:title]
+    object :photo, :cache => [:subject, :comment]
+    target_object :album, :cache => [:title]
   end
 
 end
 ```
 
-The activity verb is implied from the activity name, in the above example the verb is :new_enquiry
+The activity verb is implied from the activity name, in the above example the verb is :new_photo
 
 The object may be the entity performing the activity, or the entity on which the activity was performed.
 e.g John(actor) shared a video(object)
@@ -71,7 +71,7 @@ Activity.create_indexes
 In your controller or background worker:
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing)
+current_user.publish_activity(:new_photo, :object => @photo, :target_object => @album)
 ```
   
 This will publish the activity to the mongoid objects returned by the #followers method in the Actor.
@@ -79,11 +79,11 @@ This will publish the activity to the mongoid objects returned by the #followers
 To send your activity to different receievers, pass in an additional :receivers parameter.
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing, :receivers => :friends) # calls friends method
+current_user.publish_activity(:new_photo, :object => @photo, :target_object => @album, :receivers => :friends) # calls friends method
 ```
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :object => @enquiry, :target_object => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
+current_user.publish_activity(:new_photo, :object => @photo, :target_object => @album, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
 ```
 
 ## Retrieving Activity
@@ -113,7 +113,7 @@ activity.refresh_data
 
 # Upgrading
 
-## 0.3.3
+### 0.3.3
 
 The Activity "target" field was renamed to "target_object". If you are upgrading from a previous version of Streama you will need to rename the field in existing documents.
 

@@ -1,4 +1,4 @@
-class Listing
+class Album
   include Mongoid::Document
   
   field :title

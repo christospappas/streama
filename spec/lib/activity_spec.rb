@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe "Activity" do
 
-  let(:enquiry) { Enquiry.create(:comment => "I'm interested") }
-  let(:listing) { Listing.create(:title => "A test listing") }
+  let(:photo) { Photo.create(:file => "image.jpg") }
+  let(:album) { Album.create(:title => "A test album") }
   let(:user) { User.create(:full_name => "Christos") }
 
   describe ".activity" do
     it "registers and return a valid definition" do
       @definition = Activity.activity(:test_activity) do
         actor :user, :cache => [:full_name]
-        object :listing, :cache => [:title, :full_address]
-        target_object :listing, :cache => [:title]
+        object :photo, :cache => [:file]
+        target_object :album, :cache => [:title]
       end
       
       @definition.is_a?(Streama::Definition).should be true
@@ -28,7 +28,7 @@ describe "Activity" do
     end
     
     it "pushes activity to receivers" do
-      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target_object => listing, :receivers => @send_to})
+      @activity = Activity.publish(:new_photo, {:actor => user, :object => photo, :target_object => album, :receivers => @send_to})
       @activity.receivers.size.should == 2
     end
 
@@ -36,14 +36,14 @@ describe "Activity" do
     context "when activity not cached" do
       
       it "pushes activity to receivers" do
-        @activity = Activity.publish(:new_enquiry_without_cache, {:actor => user, :object => enquiry, :target_object => listing, :receivers => @send_to})
+        @activity = Activity.publish(:new_photo_without_cache, {:actor => user, :object => photo, :target_object => album, :receivers => @send_to})
         @activity.receivers.size.should == 2
       end
       
     end
     
     it "overrides the recievers if option passed" do
-      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target_object => listing, :receivers => @send_to})
+      @activity = Activity.publish(:new_photo, {:actor => user, :object => photo, :target_object => album, :receivers => @send_to})
       @activity.receivers.size.should == 2
     end
     
@@ -52,7 +52,7 @@ describe "Activity" do
     context "when republishing"
       before :each do
         @actor = user
-        @activity = Activity.publish(:new_enquiry, {:actor => @actor, :object => enquiry, :target_object => listing})
+        @activity = Activity.publish(:new_photo, {:actor => @actor, :object => photo, :target_object => album})
         @activity.publish
       end
       
@@ -66,7 +66,7 @@ describe "Activity" do
   
   describe ".publish" do
     it "creates a new activity" do
-      activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target_object => listing})
+      activity = Activity.publish(:new_photo, {:actor => user, :object => photo, :target_object => album})
       activity.should be_an_instance_of Activity
     end
   end
@@ -75,7 +75,7 @@ describe "Activity" do
     
     before :each do
       @user = user
-      @activity = Activity.publish(:new_enquiry, {:actor => @user, :object => enquiry, :target_object => listing})
+      @activity = Activity.publish(:new_photo, {:actor => @user, :object => photo, :target_object => album})
     end
     
     it "reloads instances and updates activities stored data" do
@@ -93,7 +93,7 @@ describe "Activity" do
   describe "#load_instance" do
     
     before :each do
-      @activity = Activity.publish(:new_enquiry, {:actor => user, :object => enquiry, :target_object => listing})
+      @activity = Activity.publish(:new_photo, {:actor => user, :object => photo, :target_object => album})
       @activity = Activity.last
     end
     
@@ -102,11 +102,11 @@ describe "Activity" do
     end
     
     it "loads an object instance" do
-      @activity.load_instance(:object).should be_instance_of Enquiry
+      @activity.load_instance(:object).should be_instance_of Photo
     end
     
     it "loads a target instance" do
-      @activity.load_instance(:target_object).should be_instance_of Listing
+      @activity.load_instance(:target_object).should be_instance_of Album
     end
     
   end

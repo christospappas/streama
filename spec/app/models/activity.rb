@@ -1,21 +1,21 @@
 class Activity
   include Streama::Activity
   
-  activity :new_enquiry do
+  activity :new_photo do
     actor :user, :cache => [:full_name]
-    object :enquiry, :cache => [:comment]
-    target_object :listing, :cache => [:title]
+    object :photo, :cache => [:file]
+    target_object :album, :cache => [:title]
   end
   
-  activity :new_enquiry_without_cache do
+  activity :new_photo_without_cache do
     actor :user
-    object :enquiry
-    target_object :listing
+    object :photo
+    target_object :album
   end
   
   activity :new_comment do
     actor :user, :cache => [:full_name]
-    object :listing
+    object :photo
   end
     
 end

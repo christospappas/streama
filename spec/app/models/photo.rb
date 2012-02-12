@@ -1,6 +1,6 @@
-class Enquiry
+class Photo
   include Mongoid::Document
   
-  field :comment
+  field :file
   
 end

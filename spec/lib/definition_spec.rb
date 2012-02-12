@@ -3,10 +3,10 @@ require 'spec_helper'
 describe "Definition" do
   
   let(:definition_dsl) do
-    dsl = Streama::DefinitionDSL.new(:new_enquiry)
+    dsl = Streama::DefinitionDSL.new(:new_photo)
     dsl.actor(:user, :cache => [:id, :full_name])
-    dsl.object(:enquiry, :cache => [:id, :full_name])
-    dsl.target_object(:listing, :cache => [:id, :name, :full_address])
+    dsl.object(:photo, :cache => [:id, :full_name])
+    dsl.target_object(:album, :cache => [:id, :name, :full_address])
     dsl
   end
   
@@ -20,11 +20,11 @@ describe "Definition" do
       @definition.actor.has_key?(:user).should be true
     end
     it "assigns @object" do
-      @definition.object.has_key?(:enquiry).should be true
+      @definition.object.has_key?(:photo).should be true
     end
     
     it "assigns @target" do
-      @definition.target_object.has_key?(:listing).should be true
+      @definition.target_object.has_key?(:album).should be true
     end
     
   end
@@ -53,7 +53,7 @@ describe "Definition" do
   describe '.find' do
     
     it "returns the definition by name" do
-      Streama::Definition.find(:new_enquiry).name.should eq :new_enquiry
+      Streama::Definition.find(:new_photo).name.should eq :new_photo
     end
     
     it "raises an exception if invalid activity" do
