@@ -5,6 +5,10 @@ describe "Actor" do
   let(:photo) { Photo.create(:comment => "I'm interested") }
   let(:album) { Album.create(:title => "A test album") }
   let(:user) { User.create(:full_name => "Christos") }
+  
+  it "raises an exception if the class is not a mongoid document" do
+    lambda { NoMongoid.new }.should raise_error Streama::Errors::NotMongoid
+  end
 
   describe "#publish_activity" do
     before :each do

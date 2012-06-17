@@ -4,6 +4,8 @@ module Streama
     extend ActiveSupport::Concern
 
     included do
+      raise Errors::NotMongoid, "Must be included in a Mongoid::Document" unless self.ancestors.include? Mongoid::Document
+      
       cattr_accessor :activity_klass
     end
 

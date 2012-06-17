@@ -104,13 +104,13 @@ module Streama
 
         class_sym = object.class.name.underscore.to_sym
 
-        raise Streama::InvalidData.new(class_sym) unless definition.send(type).has_key?(class_sym)
+        raise Errors::InvalidData.new(class_sym) unless definition.send(type).has_key?(class_sym)
     
         hash = {'id' => object.id, 'type' => object.class.name}
               
         if fields = definition.send(type)[class_sym].try(:[],:cache)
           fields.each do |field|
-            raise Streama::InvalidField.new(field) unless object.respond_to?(field)
+            raise Errors::InvalidField.new(field) unless object.respond_to?(field)
             hash[field.to_s] = object.send(field)
           end
         end
