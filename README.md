@@ -4,7 +4,13 @@
 
 Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
 
+It works by posting to and querying from a firehose of individual activity items.
+
 [![travis](https://secure.travis-ci.org/christospappas/streama.png)](http://travis-ci.org/christospappas/streama)
+
+## Project Tracking
+
+* [Streama Google Group](http://groups.google.com/group/streama)
 
 ## Install
 
@@ -88,17 +94,30 @@ current_user.publish_activity(:new_photo, :object => @photo, :target_object => @
 
 ## Retrieving Activity
 
-To retrieve all activity for an actor
+To retrieve the activity stream for an actor
 
 ``` ruby
 current_user.activity_stream
 ```
   
-To retrieve and filter to a particular activity type
+To retrieve the activity stream and filter by activity type
 
 ``` ruby
 current_user.activity_stream(:type => :activity_verb)
 ```
+
+To retrieve all activities published by an actor
+
+``` ruby
+current_user.published_activities
+```
+
+To retrieve all activities published by an actor and filtered by activity type
+
+``` ruby
+current_user.published_activities(:type => :activity_verb)
+```
+
 If you need to return the instance of an :actor, :object or :target_object from an activity call the Activity#load_instance method
 
 ``` ruby

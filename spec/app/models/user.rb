@@ -9,7 +9,7 @@ class User
   end
   
   def followers
-    User.all
+    self.class.all
   end
   
 end

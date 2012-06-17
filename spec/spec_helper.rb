@@ -9,13 +9,16 @@ $LOAD_PATH.unshift(SUPPORT)
 require 'streama'
 require 'mongoid'
 require 'rspec'
-
+require 'database_cleaner'
+ 
 LOGGER = Logger.new($stdout)
 DATABASE_ID = Process.pid
 
+DatabaseCleaner.strategy = :truncation
+
 Mongoid.configure do |config|
-  database = Mongo::Connection.new.db("mongoid_#{DATABASE_ID}")
-  database.add_user("mongoid", "test")
+  database = Mongo::Connection.new.db("streama_#{DATABASE_ID}")
+  database.add_user("streama", "test")
   config.master = database
   config.logger = nil
 end
@@ -35,11 +38,16 @@ RSpec.configure do |config|
   config.mock_with :rspec
   
   config.before(:each) do
+    DatabaseCleaner.start
     Mongoid::IdentityMap.clear
   end
   
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+  
   config.after :suite do
-    Mongoid.master.connection.drop_database("mongoid_#{DATABASE_ID}")
+    Mongoid.master.connection.drop_database("streama_#{DATABASE_ID}")
   end
   
 end

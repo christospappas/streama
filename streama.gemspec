@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec", "~> 2.5"
+  s.add_development_dependency "database_cleaner", "~> 0.8"
   s.add_development_dependency "mongoid", "~> 2.4"
   s.add_development_dependency "bson_ext", "~> 1.5"
   s.add_development_dependency "rake"
