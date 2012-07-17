@@ -13,11 +13,11 @@ module Streama
       field :target_object, :type => Hash
       field :receivers,     :type => Array
           
-      index :name
-      index [['actor._id', Mongo::ASCENDING], ['actor._type', Mongo::ASCENDING]]
-      index [['object._id', Mongo::ASCENDING], ['object._type', Mongo::ASCENDING]]
-      index [['target_object._id', Mongo::ASCENDING], ['target_object._type', Mongo::ASCENDING]]
-      index [['receivers.id', Mongo::ASCENDING], ['receivers.type', Mongo::ASCENDING]]
+      index :name => 1
+      index({ 'actor._id' => 1, 'actor._type' => 1 })
+      index({ 'object._id' => 1, 'object._type' => 1 })
+      index({ 'target_object._id' => 1, 'target_object._type' => 1 })
+      index({ 'receivers.id' => 1, 'receivers.type' => 1 })
           
       validates_presence_of :actor, :verb
       before_save :assign_data
