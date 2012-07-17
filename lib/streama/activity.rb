@@ -12,6 +12,8 @@ module Streama
       field :object,        :type => Hash
       field :target_object, :type => Hash
       field :receivers,     :type => Array
+
+      attr_accessor :actor, :target_object, :object
           
       index :name => 1
       index({ 'actor._id' => 1, 'actor._type' => 1 })
