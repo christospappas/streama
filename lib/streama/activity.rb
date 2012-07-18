@@ -7,8 +7,6 @@ module Streama
       include Mongoid::Document
       include Mongoid::Timestamps
 
-      attr_writer :actor, :target_object, :object
-
       field :verb,          :type => Symbol
       field :actor,         :type => Hash
       field :object,        :type => Hash
@@ -77,7 +75,7 @@ module Streama
     # @param [ Hash ] options The options to publish with.
     #
     def publish(options = {})
-      actor = load_instance(:actor)        
+      actor = load_instance(:actor)       
       self.receivers = (options[:receivers] || actor.followers).map { |r| { :id => r.id, :type => r.class.to_s } }
       self.save
       self
