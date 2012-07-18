@@ -8,9 +8,9 @@ module Streama
       include Mongoid::Timestamps
 
       field :verb,          :type => Symbol
-      field :actor,         :type => Hash
-      field :object,        :type => Hash
-      field :target_object, :type => Hash
+      field :actor
+      field :object
+      field :target_object
       field :receivers,     :type => Array
 
       index :name => 1
@@ -75,7 +75,7 @@ module Streama
     # @param [ Hash ] options The options to publish with.
     #
     def publish(options = {})
-      actor = load_instance(:actor)       
+      actor = load_instance(:actor) 
       self.receivers = (options[:receivers] || actor.followers).map { |r| { :id => r.id, :type => r.class.to_s } }
       self.save
       self
@@ -87,7 +87,7 @@ module Streama
     #
     # @return [Mongoid::Document] document A mongoid document instance
     def load_instance(type)
-      (data = self.send(type)).is_a?(Hash) ? data['type'].to_s.camelcase.constantize.find(data['id']) : data
+      (data = self.read_attribute(type)).is_a?(Hash) ? data['type'].to_s.camelcase.constantize.find(data['id']) : data
     end
   
     def refresh_data

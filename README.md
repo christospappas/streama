@@ -1,7 +1,5 @@
 # Streama
 
-**ALPHA**
-
 Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
 
 It works by posting to and querying from a firehose of individual activity items.
@@ -12,6 +10,8 @@ It works by posting to and querying from a firehose of individual activity items
 ## Project Tracking
 
 * [Streama Google Group](http://groups.google.com/group/streama)
+* [Code Climate](https://codeclimate.com/github/christospappas/streama)
+* [Website Demo](http://streamaweb.info)
 
 ## Install
 
@@ -133,6 +133,10 @@ activity.refresh_data
 
 ## Upgrading
 
+### 0.3.6
+
+Mongoid 3.0 support added.
+
 ### 0.3.3
 
 The Activity "target" field was renamed to "target_object". If you are upgrading from a previous version of Streama you will need to rename the field in existing documents.
@@ -148,7 +152,3 @@ Once you've made your great commits
 1. Push to your branch - git push origin my_branch
 1. Create a Pull Request from your branch
 1. That's it!
-
-## Contributors
-
-* Christos Pappas		(@christospappas)

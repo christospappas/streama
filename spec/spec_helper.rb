@@ -12,16 +12,25 @@ require 'rspec'
 require 'database_cleaner'
  
 LOGGER = Logger.new($stdout)
-DATABASE_ID = Process.pid
+# DATABASE_ID = Process.pid
 
 DatabaseCleaner.strategy = :truncation
 
-Mongoid.configure do |config|
-  database = Mongo::Connection.new.db("streama_#{DATABASE_ID}")
-  database.add_user("streama", "test")
-  config.master = database
-  config.logger = nil
+
+def database_id
+  ENV["CI"] ? "mongoid_#{Process.pid}" : "mongoid_test"
 end
+
+Mongoid.configure do |config|
+  config.connect_to(database_id)
+end
+
+# Mongoid.configure do |config|
+#   database = Mongo::Connection.new.db("streama_#{DATABASE_ID}")
+#   database.add_user("streama", "test")
+#   config.master = database
+#   config.logger = nil
+# end
 
 Dir[ File.join(MODELS, "*.rb") ].sort.each do |file|
   name = File.basename(file, ".rb")
@@ -46,8 +55,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
   
-  config.after :suite do
-    Mongoid.master.connection.drop_database("streama_#{DATABASE_ID}")
+  config.after(:suite) do
+    if ENV["CI"]
+      Mongoid::Threaded.sessions[:default].drop
+    end
   end
   
 end
