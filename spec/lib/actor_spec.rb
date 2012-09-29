@@ -35,15 +35,20 @@ describe "Actor" do
 
       u = User.create(:full_name => "Other User")
       u.publish_activity(:new_photo, :object => photo, :target_object => album)
+      u.publish_activity(:new_tag, :object => photo)
 
     end
 
     it "retrieves the stream for an actor" do
-      user.activity_stream.size.should eq 3
+      user.activity_stream.size.should eq 4
     end
 
     it "retrieves the stream and filters to a particular activity type" do
       user.activity_stream(:type => :new_photo).size.should eq 2
+    end
+    
+    it "retrieves the stream and filters to a couple particular activity types" do
+      user.activity_stream(:type => [:new_tag, :new_comment]).size.should eq 2
     end
 
   end
@@ -52,18 +57,22 @@ describe "Actor" do
     before :each do
       user.publish_activity(:new_photo, :object => photo, :target_object => album)      
       user.publish_activity(:new_comment, :object => photo)
+      user.publish_activity(:new_tag, :object => photo)
       
       u = User.create(:full_name => "Other User")
       u.publish_activity(:new_photo, :object => photo, :target_object => album)
-
     end
     
     it "retrieves published activities for the actor" do
-      user.published_activities.size.should eq 2
+      user.published_activities.size.should eq 3
     end
     
     it "retrieves and filters published activities by type for the actor" do
       user.published_activities(:type => :new_photo).size.should eq 1
+    end
+    
+    it "retrieves and filters published activities by a couple types for the actor" do
+      user.published_activities(:type => [:new_comment, :new_tag]).size.should eq 2
     end
     
   end
