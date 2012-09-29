@@ -17,5 +17,10 @@ class Activity
     actor :user, :cache => [:full_name]
     object :photo
   end
+  
+  activity :new_tag do
+    actor :user, :cache => [:full_name]
+    object :photo
+  end
     
 end
