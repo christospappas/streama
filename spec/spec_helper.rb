@@ -1,3 +1,4 @@
+require "pry"
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
@@ -10,7 +11,7 @@ require 'streama'
 require 'mongoid'
 require 'rspec'
 require 'database_cleaner'
- 
+
 LOGGER = Logger.new($stdout)
 
 DatabaseCleaner.strategy = :truncation
@@ -27,6 +28,7 @@ Dir[ File.join(MODELS, "*.rb") ].sort.each do |file|
   name = File.basename(file, ".rb")
   autoload name.camelize.to_sym, name
 end
+require File.join(MODELS,"mars","user.rb")
 
 Dir[ File.join(SUPPORT, "*.rb") ].each do |file|
   require File.basename(file)
@@ -36,20 +38,20 @@ RSpec.configure do |config|
   config.include RSpec::Matchers
   config.include Mongoid::Matchers
   config.mock_with :rspec
-  
+
   config.before(:each) do
     DatabaseCleaner.start
     Mongoid::IdentityMap.clear
   end
-  
+
   config.after(:each) do
     DatabaseCleaner.clean
   end
-  
+
   config.after(:suite) do
     if ENV["CI"]
       Mongoid::Threaded.sessions[:default].drop
     end
   end
-  
+
 end
