@@ -1,9 +1,9 @@
 module Streama
   module Activity
     extend ActiveSupport::Concern
-    
+
     included do
-      
+
       include Mongoid::Document
       include Mongoid::Timestamps
 
@@ -21,9 +21,9 @@ module Streama
 
       validates_presence_of :actor, :verb
       before_save :assign_data
-      
+
     end
-    
+
     module ClassMethods
 
       # Defines a new activity type and registers a definition
@@ -54,7 +54,7 @@ module Streama
         receivers = data.delete(:receivers)
         new({:verb => verb}.merge(data)).publish(:receivers => receivers)
       end
-      
+
       def stream_for(actor, options={})
         query = {:receivers => {'$elemMatch' => {:id => actor.id, :type => actor.class.to_s}}}
         query.merge!({:verb.in => [*options[:type]]}) if options[:type]
@@ -66,21 +66,21 @@ module Streama
          query.merge!({:verb.in => [*options[:type]]}) if options[:type]
          self.where(query).without(:receivers).desc(:created_at)
       end
-      
+
     end
 
-    
+
     # Publishes the activity to the receivers
     #
     # @param [ Hash ] options The options to publish with.
     #
     def publish(options = {})
-      actor = load_instance(:actor) 
+      actor = load_instance(:actor)
       self.receivers = (options[:receivers] || actor.followers).map { |r| { :id => r.id, :type => r.class.to_s } }
       self.save
       self
     end
-    
+
     # Returns an instance of an actor, object or target
     #
     # @param [ Symbol ] type The data type (actor, object, target) to return an instance for.
@@ -89,38 +89,38 @@ module Streama
     def load_instance(type)
       (data = self.read_attribute(type)).is_a?(Hash) ? data['type'].to_s.camelcase.constantize.find(data['id']) : data
     end
-  
+
     def refresh_data
       assign_data
       save(:validates_presence_of => false)
     end
-  
+
     protected
-      
+
     def assign_data
-    
+
       [:actor, :object, :target_object].each do |type|
         next unless object = load_instance(type)
 
         class_sym = object.class.name.underscore.to_sym
 
         raise Errors::InvalidData.new(class_sym) unless definition.send(type).has_key?(class_sym)
-    
+
         hash = {'id' => object.id, 'type' => object.class.name}
-              
+
         if fields = definition.send(type)[class_sym].try(:[],:cache)
           fields.each do |field|
             raise Errors::InvalidField.new(field) unless object.respond_to?(field)
             hash[field.to_s] = object.send(field)
           end
         end
-        write_attribute(type, hash)      
+        write_attribute(type, hash)
       end
     end
-  
+
     def definition
       @definition ||= Streama::Definition.find(verb)
     end
-    
+
   end
 end
