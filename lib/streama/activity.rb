@@ -13,7 +13,6 @@ module Streama
       field :target_object
       field :receivers,     :type => Array
 
-      index :name => 1
       index({ 'actor._id' => 1, 'actor._type' => 1 })
       index({ 'object._id' => 1, 'object._type' => 1 })
       index({ 'target_object._id' => 1, 'target_object._type' => 1 })
