@@ -4,6 +4,10 @@ Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framew
 
 It works by posting to and querying from a firehose of individual activity items.
 
+**Currently Streama uses a Fan Out On Read approach. This is great for single instance databases, however if you plan on Sharding then please be aware that it'll hit every shard when querying. I plan on changing the schema soon so that it Fans Out On Write with bucketing.**
+
+[Data Modeling Examples from the real world](http://www.10gen.com/presentations/data-modeling-examples-real-world)
+
 [![travis](https://secure.travis-ci.org/christospappas/streama.png)](http://travis-ci.org/christospappas/streama)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/christospappas/streama)
 
