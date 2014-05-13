@@ -11,8 +11,8 @@ GIT
 PATH
   remote: .
   specs:
-    streama (0.3.7)
-      mongoid (~> 4.0.0)
+    streama (0.3.8)
+      mongoid (>= 3.0, <= 5)
 
 GEM
   remote: http://rubygems.org/

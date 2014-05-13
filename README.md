@@ -137,6 +137,14 @@ activity.refresh_data
 
 ## Upgrading
 
+### 0.3.8
+
+Mongoid 4 support added.
+
+### 0.3.6
+
+Mongoid 3.0 support added.
+
 ### 0.3.6
 
 Mongoid 3.0 support added.
