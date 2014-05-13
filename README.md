@@ -145,10 +145,6 @@ Mongoid 4 support added.
 
 Mongoid 3.0 support added.
 
-### 0.3.6
-
-Mongoid 3.0 support added.
-
 ### 0.3.3
 
 The Activity "target" field was renamed to "target_object". If you are upgrading from a previous version of Streama you will need to rename the field in existing documents.
