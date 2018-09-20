@@ -1,5 +1,7 @@
 # Streama
 
+* THIS PROJECT IS NO LONGER MAINTAINED *
+
 Streama is a simple Ruby activity stream gem for use with the Mongoid ODM framework.
 
 It works by posting to and querying from a firehose of individual activity items.
