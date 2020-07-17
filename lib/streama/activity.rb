@@ -75,7 +75,7 @@ module Streama
     #
     def publish(options = {})
       actor = load_instance(:actor)
-      self.receivers = (options[:receivers] || actor.followers).map { |r| { :id => r.id, :type => r.class.to_s } }
+      self.receivers = (options[:receivers] || actor.streama_followers).map { |r| { :id => r.id, :type => r.class.to_s } }
       self.save
       self
     end
